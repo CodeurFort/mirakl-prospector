@@ -2,10 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import type { Seller, Marketplace, RefCategory } from "@/lib/types";
-
-const GeoMap = dynamic(() => import("./GeoMap"), { ssr: false });
 
 function PriorityBadge({ score }: { score: number }) {
   if (score >= 70)
@@ -53,7 +50,7 @@ export default function SellerTable() {
   const [filterMarketplace, setFilterMarketplace] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
   const [filterPriority, setFilterPriority] = useState("");
-  const [showMap, setShowMap] = useState(true);
+  const [showMap] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -94,19 +91,12 @@ export default function SellerTable() {
         <KPICard label="Low" value={stats.low} color="#770031" accent={false} />
       </div>
 
-      {/* Map toggle + Map */}
-      <div className="flex items-center justify-between">
-        <button
-          onClick={() => setShowMap(!showMap)}
-          className="text-[13px] font-bold transition-colors"
-          style={{ color: "#2764FF" }}
-        >
-          {showMap ? "Masquer la carte" : "Afficher la carte"}
-        </button>
-      </div>
+      {/* Map placeholder — will be replaced by 3D globe */}
       {showMap && !loading && sellers.length > 0 && (
         <div className="animate-fade-in">
-          <GeoMap sellers={sellers} />
+          <div className="mirakl-card-elevated p-6 text-center" style={{ color: "#6B7280" }}>
+            Globe 3D en cours d&apos;intégration...
+          </div>
         </div>
       )}
 
