@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
+import { Roboto_Serif } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
+
+const robotoSerif = Roboto_Serif({
+  variable: "--font-roboto-serif",
+  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+});
 
 export const metadata: Metadata = {
   title: "Mirakl Connect Prospector",
@@ -13,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className="h-full antialiased">
+    <html lang="fr" className={`${robotoSerif.variable} h-full antialiased`}>
       <body className="min-h-full flex">
         {/* Sidebar — Mirakl dark */}
         <aside className="w-[260px] bg-primary-dark text-white flex flex-col shrink-0 min-h-screen">

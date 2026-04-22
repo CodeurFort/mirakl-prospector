@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Serif:ital,opsz,wght@0,8..144,100..900;1,8..144,100..900&display=swap');
 
 :root {
   /* Mirakl Primary */
@@ -27,12 +26,12 @@
   --color-text-body: var(--text-body);
   --color-border: var(--border);
   --color-muted: var(--muted);
-  --font-sans: 'Roboto Serif', serif;
+  --font-sans: var(--font-roboto-serif), serif;
   --font-mono: var(--font-geist-mono);
 }
 
 * {
-  font-family: 'Roboto Serif', serif;
+  font-family: var(--font-roboto-serif), serif;
 }
 
 body {
