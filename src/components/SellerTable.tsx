@@ -116,12 +116,20 @@ export default function SellerTable() {
               score: s.match_score || 0,
               marketplace: s.marketplace?.["marketplace name"] || "",
             }))}
+            selectedMarketplace={
+              filterMarketplace
+                ? marketplaces.find((m) => m.id === filterMarketplace)?.["marketplace name"]
+                : undefined
+            }
             onSellerClick={(id) => router.push(`/seller/${id}`)}
             onMarketplaceClick={(name) => {
               const mp = marketplaces.find(
                 (m) => m["marketplace name"].toLowerCase() === name.toLowerCase()
               );
-              if (mp) setFilterMarketplace(mp.id);
+              if (mp) {
+                // Toggle: click again to deselect
+                setFilterMarketplace((prev) => (prev === mp.id ? "" : mp.id));
+              }
             }}
           />
         </div>
