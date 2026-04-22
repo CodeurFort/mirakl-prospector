@@ -1,46 +1,90 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Serif:ital,opsz,wght@0,8..144,100..900;1,8..144,100..900&display=swap');
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
-  --primary: #6d28d9;
-  --primary-light: #8b5cf6;
-  --accent: #f59e0b;
-  --success: #10b981;
-  --danger: #ef4444;
-  --muted: #64748b;
-  --card: #ffffff;
-  --border: #e2e8f0;
+  /* Mirakl Primary */
+  --primary-dark: #03182F;
+  --primary-accent: #2764FF;
+  --primary-bg: #F2F8FF;
+  /* Mirakl Secondary */
+  --secondary-dark: #770031;
+  --secondary-accent: #F22E75;
+  --secondary-bg: #FFE7EC;
+  /* Neutral */
+  --text-body: #30373E;
+  --white: #FFFFFF;
+  --border: #E2E8F0;
+  --muted: #6B7280;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-primary: var(--primary);
-  --color-primary-light: var(--primary-light);
-  --color-accent: var(--accent);
-  --color-success: var(--success);
-  --color-danger: var(--danger);
-  --color-muted: var(--muted);
-  --color-card: var(--card);
+  --color-primary-dark: var(--primary-dark);
+  --color-primary-accent: var(--primary-accent);
+  --color-primary-bg: var(--primary-bg);
+  --color-secondary-dark: var(--secondary-dark);
+  --color-secondary-accent: var(--secondary-accent);
+  --color-secondary-bg: var(--secondary-bg);
+  --color-text-body: var(--text-body);
   --color-border: var(--border);
-  --font-sans: var(--font-geist-sans);
+  --color-muted: var(--muted);
+  --font-sans: 'Roboto Serif', serif;
   --font-mono: var(--font-geist-mono);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+* {
+  font-family: 'Roboto Serif', serif;
 }
 
+body {
+  background: var(--primary-bg);
+  color: var(--primary-dark);
+}
+
+/* Mirakl card style */
+.mirakl-card {
+  background: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+.mirakl-card-elevated {
+  background: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+.mirakl-card-dark {
+  background: var(--primary-dark);
+  border-radius: 8px;
+  color: white;
+}
+
+/* Animations */
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
 
 .animate-shimmer {
-  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background: linear-gradient(90deg, #E8F0FE 25%, #D4E4FF 50%, #E8F0FE 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(39, 100, 255, 0.4); }
+  100% { box-shadow: 0 0 0 12px rgba(39, 100, 255, 0); }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 1.5s infinite;
 }

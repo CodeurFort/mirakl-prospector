@@ -29,9 +29,7 @@ interface ScoredSeller {
 export default function ResearchPage() {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
-  const [marketplace, setMarketplace] = useState<MarketplaceResult | null>(
-    null
-  );
+  const [marketplace, setMarketplace] = useState<MarketplaceResult | null>(null);
   const [sellers, setSellers] = useState<ScoredSeller[]>([]);
   const [stats, setStats] = useState({ total: 0, high: 0, medium: 0 });
 
@@ -67,23 +65,18 @@ export default function ResearchPage() {
   }
 
   const suggestions = [
-    "About You",
-    "ASOS Marketplace",
-    "Farfetch",
-    "Veepee",
-    "Privalia",
-    "Decathlon Marketplace",
-    "Showroomprivé",
-    "Mango",
+    "About You", "ASOS Marketplace", "Farfetch", "Veepee",
+    "Privalia", "Decathlon Marketplace", "Showroomprivé", "Mango",
   ];
 
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="p-8" style={{ maxWidth: 1200 }}>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold">Marketplace Research</h1>
-        <p className="text-muted mt-1">
-          Entrez une marketplace pour identifier automatiquement les sellers
-          compatibles
+        <h1 className="font-bold" style={{ fontSize: 22, lineHeight: "32px", color: "#03182F", paddingBottom: 8 }}>
+          Marketplace Research
+        </h1>
+        <p style={{ fontSize: 14, color: "#30373E", lineHeight: "24px" }}>
+          Entrez un nom de marketplace — l&apos;IA analyse son profil et identifie automatiquement les sellers compatibles
         </p>
       </div>
 
@@ -95,25 +88,26 @@ export default function ResearchPage() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Nom de la marketplace (ex: About You, ASOS, Farfetch...)"
-            className="flex-1 px-4 py-3 border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+            className="flex-1 px-5 py-3.5 rounded-lg text-[14px] focus:outline-none focus:ring-2 focus:ring-[#2764FF]/30 mirakl-card-elevated"
+            style={{ color: "#03182F", border: "1px solid #E2E8F0" }}
           />
           <button
             type="submit"
             disabled={loading || !query.trim()}
-            className="px-6 py-3 bg-primary text-white rounded-xl text-sm font-medium hover:bg-primary-light transition-colors disabled:opacity-50"
+            className="px-6 py-3.5 rounded-lg text-[14px] font-bold transition-all hover:shadow-lg disabled:opacity-50"
+            style={{ background: "#2764FF", color: "#FFFFFF" }}
           >
-            {loading ? "Analyse en cours..." : "Analyser"}
+            {loading ? "Analyse..." : "Analyser la marketplace"}
           </button>
         </div>
-        <div className="flex gap-2 mt-3 flex-wrap">
+        <div className="flex gap-2 mt-4 flex-wrap">
           {suggestions.map((s) => (
             <button
               key={s}
               type="button"
-              onClick={() => {
-                setQuery(s);
-              }}
-              className="px-3 py-1 text-xs border border-border rounded-full hover:bg-gray-50 transition-colors"
+              onClick={() => setQuery(s)}
+              className="px-3 py-1.5 text-[12px] font-bold rounded-full transition-all hover:shadow-sm"
+              style={{ border: "1px solid #E2E8F0", color: "#03182F", background: "#FFFFFF" }}
             >
               {s}
             </button>
@@ -123,200 +117,182 @@ export default function ResearchPage() {
 
       {/* Loading */}
       {loading && (
-        <div className="text-center py-16">
-          <div className="inline-block w-10 h-10 border-3 border-primary border-t-transparent rounded-full animate-spin mb-4" />
-          <p className="text-muted">
-            Analyse de &quot;{query}&quot; avec GPT-4o...
+        <div className="text-center py-16 animate-fade-in">
+          <div
+            className="inline-block w-12 h-12 border-3 rounded-full animate-spin mb-4"
+            style={{ borderColor: "#E2E8F0", borderTopColor: "#2764FF" }}
+          />
+          <p className="text-[16px] font-bold" style={{ color: "#03182F" }}>
+            Analyse de &quot;{query}&quot; en cours...
           </p>
-          <p className="text-xs text-muted mt-1">
-            Identification du profil, cross-reference avec la base sellers,
-            scoring...
+          <p className="text-[13px] mt-2" style={{ color: "#6B7280" }}>
+            Identification du profil marketplace, cross-reference avec {sellers.length || 109} sellers, scoring...
           </p>
         </div>
       )}
 
       {/* Results */}
       {marketplace && !loading && (
-        <div className="space-y-6">
-          {/* Marketplace profile */}
-          <div className="bg-card rounded-xl border border-border p-6">
-            <h2 className="text-lg font-bold mb-2">{marketplace.name}</h2>
-            <p className="text-sm text-muted mb-4">
-              {marketplace.description}
-            </p>
-            <div className="grid grid-cols-2 gap-4 text-sm">
+        <div className="space-y-6 animate-fade-in">
+          {/* Marketplace profile card */}
+          <div className="mirakl-card-dark p-6">
+            <div className="flex items-start justify-between">
               <div>
-                <p className="font-semibold mb-1">Catégories principales</p>
-                <div className="flex flex-wrap gap-1">
-                  {marketplace.preferred_categories.map((c) => (
-                    <span
-                      key={c}
-                      className="px-2 py-0.5 bg-primary/10 text-primary rounded text-xs"
-                    >
-                      {c}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <p className="font-semibold mb-1">Positionnement prix</p>
-                <div className="flex flex-wrap gap-1">
-                  {marketplace.preferred_prices.map((p) => (
-                    <span
-                      key={p}
-                      className="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-xs"
-                    >
-                      {p}
-                    </span>
-                  ))}
-                  {marketplace.accepted_prices.map((p) => (
-                    <span
-                      key={p}
-                      className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs"
-                    >
-                      {p}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <p className="font-semibold mb-1">Pays cibles</p>
-                <div className="flex flex-wrap gap-1">
-                  {marketplace.preferred_countries.map((c) => (
-                    <span
-                      key={c}
-                      className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-xs"
-                    >
-                      {c}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <p className="font-semibold mb-1">
-                  Marques connues ({marketplace.known_brands?.length || 0})
+                <p className="text-[12px] font-bold" style={{ color: "rgba(255,255,255,0.5)" }}>
+                  PROFIL MARKETPLACE
                 </p>
-                <p className="text-xs text-muted">
-                  {marketplace.known_brands?.slice(0, 10).join(", ")}
-                  {(marketplace.known_brands?.length || 0) > 10 && "..."}
+                <h2 className="text-[22px] font-bold mt-1 text-white">
+                  {marketplace.name}
+                </h2>
+                <p className="text-[14px] mt-2" style={{ color: "rgba(255,255,255,0.7)" }}>
+                  {marketplace.description}
                 </p>
               </div>
+              <div
+                className="px-4 py-2 rounded-lg text-[14px] font-bold"
+                style={{ background: "rgba(39,100,255,0.2)", color: "#7EB3FF" }}
+              >
+                {marketplace.known_brands?.length || 0} marques identifiées
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4 gap-4 mt-6">
+              <ProfileSection
+                title="Catégories"
+                items={marketplace.preferred_categories}
+                color="#2764FF"
+              />
+              <ProfileSection
+                title="Prix préférés"
+                items={marketplace.preferred_prices}
+                color="#2764FF"
+              />
+              <ProfileSection
+                title="Prix acceptés"
+                items={marketplace.accepted_prices}
+                color="#6B7280"
+              />
+              <ProfileSection
+                title="Pays cibles"
+                items={marketplace.preferred_countries}
+                color="#2764FF"
+              />
             </div>
           </div>
 
           {/* Stats */}
           <div className="grid grid-cols-3 gap-4">
-            <div className="bg-card rounded-xl border border-border p-4 text-center">
-              <p className="text-sm text-muted">Sellers compatibles</p>
-              <p className="text-2xl font-bold">{stats.total}</p>
+            <div className="mirakl-card-elevated p-5 text-center">
+              <p className="text-[13px]" style={{ color: "#6B7280" }}>Sellers compatibles</p>
+              <p className="text-[32px] font-bold mt-1" style={{ color: "#03182F" }}>{stats.total}</p>
             </div>
-            <div className="bg-card rounded-xl border border-border p-4 text-center">
-              <p className="text-sm text-muted">High priority</p>
-              <p className="text-2xl font-bold text-emerald-600">
-                {stats.high}
-              </p>
+            <div className="mirakl-card-elevated p-5 text-center">
+              <p className="text-[13px]" style={{ color: "#6B7280" }}>High priority</p>
+              <p className="text-[32px] font-bold mt-1" style={{ color: "#2764FF" }}>{stats.high}</p>
             </div>
-            <div className="bg-card rounded-xl border border-border p-4 text-center">
-              <p className="text-sm text-muted">Medium priority</p>
-              <p className="text-2xl font-bold text-amber-600">
-                {stats.medium}
-              </p>
+            <div className="mirakl-card-elevated p-5 text-center">
+              <p className="text-[13px]" style={{ color: "#6B7280" }}>Medium priority</p>
+              <p className="text-[32px] font-bold mt-1" style={{ color: "#E65100" }}>{stats.medium}</p>
             </div>
           </div>
 
+          {/* Known brands */}
+          {marketplace.known_brands && marketplace.known_brands.length > 0 && (
+            <div className="mirakl-card-elevated p-6">
+              <h3 className="font-bold mb-3" style={{ fontSize: 16, color: "#03182F" }}>
+                Marques déjà présentes sur {marketplace.name}
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {marketplace.known_brands.map((brand) => (
+                  <span
+                    key={brand}
+                    className="px-3 py-1 rounded-full text-[12px] font-bold"
+                    style={{ background: "#FFE7EC", color: "#770031" }}
+                  >
+                    {brand}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Sellers table */}
-          <div className="bg-card rounded-xl border border-border overflow-hidden">
+          <div className="mirakl-card-elevated overflow-hidden">
+            <div className="p-4" style={{ borderBottom: "2px solid #E2E8F0", background: "#F2F8FF" }}>
+              <h3 className="font-bold" style={{ fontSize: 16, color: "#03182F" }}>
+                Sellers recommandés pour {marketplace.name}
+              </h3>
+            </div>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-[14px]">
                 <thead>
-                  <tr className="border-b border-border bg-gray-50/50">
-                    <th className="text-left px-4 py-3 font-semibold">
-                      Seller
-                    </th>
-                    <th className="text-left px-4 py-3 font-semibold">
-                      Catégorie
-                    </th>
-                    <th className="text-left px-4 py-3 font-semibold">Pays</th>
-                    <th className="text-left px-4 py-3 font-semibold">
-                      Score
-                    </th>
-                    <th className="text-left px-4 py-3 font-semibold">
-                      Priorité
-                    </th>
-                    <th className="text-left px-4 py-3 font-semibold">
-                      Actions
-                    </th>
+                  <tr style={{ borderBottom: "1px solid #E2E8F0" }}>
+                    <th className="text-left px-4 py-3 font-bold" style={{ color: "#03182F" }}>Seller</th>
+                    <th className="text-left px-4 py-3 font-bold" style={{ color: "#03182F" }}>Catégorie</th>
+                    <th className="text-left px-4 py-3 font-bold" style={{ color: "#03182F" }}>Pays</th>
+                    <th className="text-left px-4 py-3 font-bold" style={{ color: "#03182F" }}>Score</th>
+                    <th className="text-left px-4 py-3 font-bold" style={{ color: "#03182F" }}>Priorité</th>
+                    <th className="text-left px-4 py-3 font-bold" style={{ color: "#03182F" }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {sellers.length === 0 ? (
                     <tr>
-                      <td
-                        colSpan={6}
-                        className="px-4 py-8 text-center text-muted"
-                      >
+                      <td colSpan={6} className="px-4 py-8 text-center" style={{ color: "#6B7280" }}>
                         Aucun seller compatible trouvé
                       </td>
                     </tr>
                   ) : (
-                    sellers.map(
-                      (seller) =>
-                        seller && (
-                          <tr
-                            key={seller.id}
-                            className="border-b border-border hover:bg-gray-50/50"
-                          >
-                            <td className="px-4 py-3 font-medium">
-                              {seller.name}
-                            </td>
-                            <td className="px-4 py-3 text-muted">
-                              {seller.category}
-                            </td>
-                            <td className="px-4 py-3 text-muted">
+                    sellers.map((seller, i) =>
+                      seller && (
+                        <tr
+                          key={seller.id}
+                          className="animate-fade-in hover:bg-[#F2F8FF] transition-colors"
+                          style={{ borderBottom: "1px solid #E2E8F0", animationDelay: `${i * 20}ms` }}
+                        >
+                          <td className="px-4 py-3 font-bold" style={{ color: "#03182F" }}>{seller.name}</td>
+                          <td className="px-4 py-3" style={{ color: "#30373E" }}>{seller.category}</td>
+                          <td className="px-4 py-3">
+                            <span className="px-2 py-0.5 rounded text-[11px] font-bold" style={{ background: "#F2F8FF", color: "#2764FF" }}>
                               {seller.country}
-                            </td>
-                            <td className="px-4 py-3">
-                              <div className="flex items-center gap-2">
-                                <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
-                                  <div
-                                    className={`h-full rounded-full ${
-                                      seller.score >= 70
-                                        ? "bg-emerald-500"
-                                        : seller.score >= 50
-                                          ? "bg-amber-500"
-                                          : "bg-red-400"
-                                    }`}
-                                    style={{ width: `${seller.score}%` }}
-                                  />
-                                </div>
-                                <span className="font-medium w-8">
-                                  {seller.score}
-                                </span>
+                            </span>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-2">
+                              <div className="w-16 h-[6px] rounded-full overflow-hidden" style={{ background: "#E2E8F0" }}>
+                                <div
+                                  className="h-full rounded-full"
+                                  style={{
+                                    width: `${seller.score}%`,
+                                    background: seller.score >= 70 ? "#2764FF" : seller.score >= 50 ? "#F59E0B" : "#F22E75",
+                                  }}
+                                />
                               </div>
-                            </td>
-                            <td className="px-4 py-3">
-                              <span
-                                className={`px-2 py-0.5 text-xs font-semibold rounded-full ${
-                                  seller.priority === "HIGH"
-                                    ? "bg-emerald-100 text-emerald-700"
-                                    : seller.priority === "MEDIUM"
-                                      ? "bg-amber-100 text-amber-700"
-                                      : "bg-red-100 text-red-700"
-                                }`}
-                              >
-                                {seller.priority}
-                              </span>
-                            </td>
-                            <td className="px-4 py-3">
-                              <Link
-                                href={`/seller/${seller.id}`}
-                                className="px-3 py-1.5 bg-primary text-white text-xs rounded-lg hover:bg-primary-light transition-colors"
-                              >
-                                Mails
-                              </Link>
-                            </td>
-                          </tr>
-                        )
+                              <span className="font-bold" style={{ color: "#03182F" }}>{seller.score}</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <span
+                              className="px-2 py-0.5 text-[11px] font-bold rounded-full"
+                              style={{
+                                background: seller.priority === "HIGH" ? "#E8F5E9" : seller.priority === "MEDIUM" ? "#FFF3E0" : "#FFE7EC",
+                                color: seller.priority === "HIGH" ? "#2E7D32" : seller.priority === "MEDIUM" ? "#E65100" : "#770031",
+                              }}
+                            >
+                              {seller.priority}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3">
+                            <Link
+                              href={`/seller/${seller.id}`}
+                              className="px-3 py-1.5 rounded-lg text-[12px] font-bold transition-all hover:shadow-md"
+                              style={{ background: "#2764FF", color: "#FFFFFF" }}
+                            >
+                              Générer mails
+                            </Link>
+                          </td>
+                        </tr>
+                      )
                     )
                   )}
                 </tbody>
@@ -325,6 +301,35 @@ export default function ResearchPage() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function ProfileSection({
+  title,
+  items,
+  color,
+}: {
+  title: string;
+  items: string[];
+  color: string;
+}) {
+  return (
+    <div>
+      <p className="text-[11px] font-bold mb-2" style={{ color: "rgba(255,255,255,0.5)" }}>
+        {title}
+      </p>
+      <div className="flex flex-wrap gap-1">
+        {items.map((item) => (
+          <span
+            key={item}
+            className="px-2 py-0.5 rounded text-[11px] font-bold"
+            style={{ background: `${color}33`, color: "#FFFFFF" }}
+          >
+            {item}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
