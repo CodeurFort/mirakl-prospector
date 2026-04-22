@@ -1,0 +1,87 @@
+// Types matching Supabase schema
+
+export interface Seller {
+  id: string;
+  seller_name: string;
+  category_id: string | null;
+  catalogue_size: string | null;
+  distribution_type_id: string | null;
+  season_type_id: string | null;
+  country_id: string | null;
+  price_category_id: string | null;
+  customer_category_id: string | null;
+  match_score: number | null;
+  match_rationale: string | null;
+  top_match_marketplace_id: string | null;
+  amazon_presence: boolean | null;
+  amazon_product_count: number | null;
+  status: string | null;
+  enriched_at: string | null;
+  created_at: string | null;
+  // Joined fields
+  category?: { label: string } | null;
+  country?: { label: string; code: string } | null;
+  price_category?: { label: string } | null;
+  distribution_type?: { label: string } | null;
+  marketplace?: { "marketplace name": string } | null;
+}
+
+export interface Marketplace {
+  id: string;
+  "marketplace name": string;
+  description: string | null;
+  categories: string | null;
+}
+
+export interface RefCategory {
+  id: string;
+  label: string;
+}
+
+export interface RefCountry {
+  id: string;
+  label: string;
+  code: string;
+}
+
+export interface MarketplaceProfile {
+  name: string;
+  preferred_categories: string[];
+  preferred_prices: string[];
+  accepted_prices: string[];
+  preferred_countries: string[];
+  accepted_countries: string[];
+  min_catalog: number;
+  known_brands?: string[];
+  description?: string;
+}
+
+export interface EmailSequence {
+  mail1: GeneratedEmail;
+  mail2: GeneratedEmail;
+  mail3: GeneratedEmail;
+}
+
+export interface GeneratedEmail {
+  subject: string;
+  body: string;
+  timing: string;
+  mailNumber: number;
+}
+
+export interface ROIEstimate {
+  timesSavedPerMonth: number;
+  costWithoutMirakl: number;
+  costWithMirakl: number;
+  monthlySavings: number;
+  revenueUpliftPercent: string;
+  eligibleMarketplaces: number;
+}
+
+export interface CompetitorAnalysis {
+  competitors: {
+    name: string;
+    presentOn: string[];
+  }[];
+  marketTrend: string;
+}
