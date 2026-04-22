@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Roboto_Serif } from "next/font/google";
 import "./globals.css";
+import { MobileNav } from "@/components/MobileNav";
 import Link from "next/link";
 
 const robotoSerif = Roboto_Serif({
@@ -14,6 +15,14 @@ export const metadata: Metadata = {
   description: "Outil de prospection intelligent pour Mirakl Connect",
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: "#03182F",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -22,8 +31,8 @@ export default function RootLayout({
   return (
     <html lang="fr" className={`${robotoSerif.variable} h-full antialiased`}>
       <body className="min-h-full flex">
-        {/* Sidebar — Mirakl dark */}
-        <aside className="w-[260px] bg-primary-dark text-white flex flex-col shrink-0 min-h-screen">
+        {/* Sidebar — desktop only */}
+        <aside className="hidden lg:flex w-[260px] bg-primary-dark text-white flex-col shrink-0 min-h-screen">
           <div className="px-6 py-6 border-b border-white/10">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded bg-primary-accent flex items-center justify-center text-sm font-bold">
@@ -55,6 +64,9 @@ export default function RootLayout({
             </p>
           </div>
         </aside>
+
+        {/* Mobile nav */}
+        <MobileNav />
 
         {/* Main */}
         <main className="flex-1 overflow-auto bg-primary-bg">{children}</main>

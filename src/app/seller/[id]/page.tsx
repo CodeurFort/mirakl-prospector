@@ -2,6 +2,9 @@
 
 import { useState, useEffect, use } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+
+const ScoreRadar = dynamic(() => import("@/components/ScoreRadar"), { ssr: false });
 
 interface SellerData {
   id: string;
@@ -92,6 +95,121 @@ export default function SellerPage({
     setTimeout(() => setCopied(false), 2000);
   }
 
+  function exportPDF() {
+    if (!seller) return;
+    const generatedEmails = emails.filter((e): e is GeneratedEmail => e !== null);
+    if (generatedEmails.length === 0) return;
+
+    const timingLabels: Record<number, string> = {
+      1: "J0 — Accroche concurrentielle",
+      2: "J+5 — ROI chiffré",
+      3: "J+12 — Closing",
+    };
+
+    const roiEmail = emails[1];
+    const roiSection = roiEmail?.roi
+      ? `
+        <div style="margin-top:32px;padding:24px;background:#F2F8FF;border-radius:8px;">
+          <h3 style="font-size:16px;color:#03182F;margin:0 0 16px 0;">Résumé ROI</h3>
+          <div style="display:flex;gap:24px;flex-wrap:wrap;">
+            <div style="text-align:center;flex:1;min-width:120px;">
+              <div style="font-size:11px;color:#6B7280;font-weight:700;">Temps économisé</div>
+              <div style="font-size:22px;font-weight:700;color:#2764FF;margin-top:4px;">${roiEmail.roi.timesSavedPerMonth}h</div>
+              <div style="font-size:11px;color:#6B7280;">/mois</div>
+            </div>
+            <div style="text-align:center;flex:1;min-width:120px;">
+              <div style="font-size:11px;color:#6B7280;font-weight:700;">Coût sans Mirakl</div>
+              <div style="font-size:22px;font-weight:700;color:#F22E75;margin-top:4px;">${roiEmail.roi.costWithoutMirakl}€</div>
+              <div style="font-size:11px;color:#6B7280;">/mois</div>
+            </div>
+            <div style="text-align:center;flex:1;min-width:120px;">
+              <div style="font-size:11px;color:#6B7280;font-weight:700;">Avec Mirakl Connect</div>
+              <div style="font-size:22px;font-weight:700;color:#2E7D32;margin-top:4px;">${roiEmail.roi.costWithMirakl}€</div>
+              <div style="font-size:11px;color:#6B7280;">/mois</div>
+            </div>
+            <div style="text-align:center;flex:1;min-width:120px;">
+              <div style="font-size:11px;color:#6B7280;font-weight:700;">Uplift CA</div>
+              <div style="font-size:22px;font-weight:700;color:#2764FF;margin-top:4px;">${roiEmail.roi.revenueUpliftPercent}</div>
+              <div style="font-size:11px;color:#6B7280;">an 1</div>
+            </div>
+          </div>
+        </div>`
+      : "";
+
+    const emailsHTML = generatedEmails
+      .map(
+        (email) => `
+        <div style="margin-top:32px;">
+          <div style="font-size:12px;font-weight:700;color:#6B7280;margin-bottom:8px;">
+            ${timingLabels[email.mailNumber] || `Mail ${email.mailNumber}`}
+          </div>
+          <div style="font-size:14px;font-weight:700;color:#03182F;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #D4E4FF;">
+            Objet : ${email.subject}
+          </div>
+          <div style="font-size:14px;line-height:1.7;color:#30373E;white-space:pre-wrap;">${email.body}</div>
+          <hr style="border:none;border-top:1px solid #E2E8F0;margin-top:24px;" />
+        </div>`
+      )
+      .join("");
+
+    const today = new Date().toLocaleDateString("fr-FR", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+
+    const htmlContent = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Séquence de prospection — ${seller.seller_name}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Serif:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Roboto Serif', Georgia, serif; color: #30373E; padding: 48px; max-width: 800px; margin: 0 auto; }
+    @media print {
+      body { padding: 24px; }
+      .no-print { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:32px;padding-bottom:20px;border-bottom:3px solid #03182F;">
+    <div style="width:40px;height:40px;background:#03182F;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#FFFFFF;font-size:20px;font-weight:700;">M</div>
+    <div>
+      <div style="font-size:18px;font-weight:700;color:#03182F;">Mirakl Connect Prospector</div>
+      <div style="font-size:12px;color:#6B7280;">Séquence de prospection personnalisée</div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:8px;">
+    <div style="font-size:20px;font-weight:700;color:#03182F;">${seller.seller_name}</div>
+  </div>
+  <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:32px;">
+    <span style="font-size:12px;color:#6B7280;">Catégorie : <strong style="color:#03182F;">${seller.category?.label || "—"}</strong></span>
+    <span style="font-size:12px;color:#6B7280;">Pays : <strong style="color:#03182F;">${seller.country?.code || "—"}</strong></span>
+    <span style="font-size:12px;color:#6B7280;">Score : <strong style="color:#2764FF;">${score}/100</strong></span>
+  </div>
+
+  ${emailsHTML}
+  ${roiSection}
+
+  <div style="margin-top:48px;padding-top:16px;border-top:2px solid #E2E8F0;font-size:11px;color:#6B7280;text-align:center;">
+    Généré par Mirakl Connect Prospector — ${today}
+  </div>
+</body>
+</html>`;
+
+    const printWindow = window.open("", "_blank");
+    if (printWindow) {
+      printWindow.document.write(htmlContent);
+      printWindow.document.close();
+      printWindow.onload = () => {
+        printWindow.print();
+      };
+    }
+  }
+
   if (loading) {
     return (
       <div className="p-8">
@@ -132,19 +250,19 @@ export default function SellerPage({
     .filter((m) => m.name && !isNaN(m.score));
 
   return (
-    <div className="p-8" style={{ maxWidth: 1000 }}>
+    <div className="p-4 pt-[68px] lg:pt-4 lg:p-8" style={{ maxWidth: 1000 }}>
       {/* Back */}
       <Link
         href="/"
-        className="inline-flex items-center gap-1 text-[13px] font-bold mb-6"
+        className="inline-flex items-center gap-1 text-[13px] font-bold mb-4 lg:mb-6"
         style={{ color: "#2764FF" }}
       >
         ← Dashboard
       </Link>
 
       {/* Seller header card */}
-      <div className="mirakl-card-elevated p-6 mb-6 animate-fade-in">
-        <div className="flex items-start justify-between">
+      <div className="mirakl-card-elevated p-4 lg:p-6 mb-4 lg:mb-6 animate-fade-in">
+        <div className="flex flex-col sm:flex-row items-start justify-between gap-3">
           <div>
             <h1 className="font-bold" style={{ fontSize: 22, lineHeight: "32px", color: "#03182F" }}>
               {seller.seller_name}
@@ -191,30 +309,36 @@ export default function SellerPage({
           )}
         </div>
 
-        {/* Per-marketplace scores */}
+        {/* Per-marketplace scores with radar */}
         {mpScores.length > 0 && (
           <div className="mt-5 pt-4" style={{ borderTop: "1px solid #E2E8F0" }}>
             <p className="text-[12px] font-bold mb-3" style={{ color: "#03182F" }}>
-              Scores par marketplace
+              Compatibilité par marketplace
             </p>
-            <div className="grid grid-cols-4 gap-3">
-              {mpScores.map((mp) => (
-                <div
-                  key={mp.name}
-                  className="rounded-lg p-3 text-center"
-                  style={{ background: mp.score >= 70 ? "#F2F8FF" : "#FFF9F0" }}
-                >
-                  <p className="text-[11px] font-bold" style={{ color: "#6B7280" }}>
-                    {mp.name}
-                  </p>
-                  <p
-                    className="text-[20px] font-bold mt-1"
-                    style={{ color: mp.score >= 70 ? "#2764FF" : "#E65100" }}
-                  >
-                    {mp.score}
-                  </p>
-                </div>
-              ))}
+            <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 items-center">
+              {/* Radar chart */}
+              <div className="shrink-0">
+                <ScoreRadar scores={mpScores} size={220} />
+              </div>
+              {/* Score cards */}
+              <div className="flex-1 w-full grid grid-cols-2 lg:grid-cols-3 gap-2">
+                {mpScores.map((mp) => {
+                  const c = mp.score >= 70 ? "#2764FF" : mp.score >= 50 ? "#E65100" : "#770031";
+                  return (
+                    <div key={mp.name} className="rounded-lg p-3"
+                      style={{ background: mp.score >= 70 ? "#F2F8FF" : mp.score >= 50 ? "#FFF9F0" : "#FFF5F5" }}>
+                      <p className="text-[10px] font-bold truncate" style={{ color: "#6B7280" }}>{mp.name}</p>
+                      <div className="flex items-baseline gap-1 mt-1">
+                        <span className="text-[20px] font-bold" style={{ color: c }}>{mp.score}</span>
+                        <span className="text-[10px]" style={{ color: "#6B7280" }}>/100</span>
+                      </div>
+                      <div className="mt-1.5 h-[3px] rounded-full overflow-hidden" style={{ background: "#E2E8F0" }}>
+                        <div className="h-full rounded-full" style={{ width: `${mp.score}%`, background: c }} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         )}
@@ -231,27 +355,38 @@ export default function SellerPage({
               3 mails personnalisés générés par GPT-4o
             </p>
           </div>
-          <button
-            onClick={generateAllMails}
-            disabled={generatingMail !== null}
-            className="px-5 py-2.5 rounded-lg text-[14px] font-bold transition-all hover:shadow-lg disabled:opacity-50"
-            style={{ background: "#2764FF", color: "#FFFFFF" }}
-          >
-            {generatingMail !== null ? `Génération mail ${generatingMail}...` : "Générer les 3 mails"}
-          </button>
+          <div className="flex gap-2">
+            {emails.some((e) => e !== null) && (
+              <button
+                onClick={exportPDF}
+                className="px-4 py-2.5 rounded-lg text-[14px] font-bold transition-all hover:shadow-md"
+                style={{ border: "1px solid #03182F", color: "#03182F" }}
+              >
+                Exporter PDF
+              </button>
+            )}
+            <button
+              onClick={generateAllMails}
+              disabled={generatingMail !== null}
+              className="px-5 py-2.5 rounded-lg text-[14px] font-bold transition-all hover:shadow-lg disabled:opacity-50"
+              style={{ background: "#2764FF", color: "#FFFFFF" }}
+            >
+              {generatingMail !== null ? `Génération mail ${generatingMail}...` : "Générer les 3 mails"}
+            </button>
+          </div>
         </div>
 
         {/* Tabs */}
-        <div className="flex" style={{ borderBottom: "1px solid #E2E8F0" }}>
+        <div className="flex overflow-x-auto" style={{ borderBottom: "1px solid #E2E8F0" }}>
           {[
-            { n: 1, label: "Accroche concurrentielle", timing: "J0" },
-            { n: 2, label: "ROI chiffré", timing: "J+5" },
+            { n: 1, label: "Accroche", timing: "J0" },
+            { n: 2, label: "ROI", timing: "J+5" },
             { n: 3, label: "Closing", timing: "J+12" },
           ].map(({ n, label, timing }) => (
             <button
               key={n}
               onClick={() => setActiveTab(n)}
-              className="flex-1 px-4 py-3 text-[14px] font-bold transition-all relative"
+              className="flex-1 min-w-0 px-2 lg:px-4 py-3 text-[12px] lg:text-[14px] font-bold transition-all relative"
               style={{
                 color: activeTab === n ? "#2764FF" : "#6B7280",
                 background: activeTab === n ? "#F2F8FF" : "transparent",
@@ -319,7 +454,7 @@ export default function SellerPage({
 
               {/* ROI cards for mail 2 */}
               {activeTab === 2 && emails[1]?.roi && (
-                <div className="mt-4 grid grid-cols-4 gap-3">
+                <div className="mt-4 grid grid-cols-2 lg:grid-cols-4 gap-3">
                   <ROICard label="Temps économisé" value={`${emails[1].roi.timesSavedPerMonth}h`} sub="/mois" color="#2764FF" />
                   <ROICard label="Coût sans Mirakl" value={`${emails[1].roi.costWithoutMirakl}€`} sub="/mois" color="#F22E75" />
                   <ROICard label="Avec Mirakl Connect" value={`${emails[1].roi.costWithMirakl}€`} sub="/mois" color="#2E7D32" />

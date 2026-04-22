@@ -70,7 +70,7 @@ export default function ResearchPage() {
   ];
 
   return (
-    <div className="p-8" style={{ maxWidth: 1200 }}>
+    <div className="p-4 pt-[68px] lg:pt-4 lg:p-8" style={{ maxWidth: 1200 }}>
       <div className="mb-8">
         <h1 className="font-bold" style={{ fontSize: 22, lineHeight: "32px", color: "#03182F", paddingBottom: 8 }}>
           Marketplace Research
