@@ -2,7 +2,11 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import type { Seller, Marketplace, RefCategory } from "@/lib/types";
+
+const Globe3D = dynamic(() => import("./Globe3D"), { ssr: false });
 
 function PriorityBadge({ score }: { score: number }) {
   if (score >= 70)
@@ -50,7 +54,8 @@ export default function SellerTable() {
   const [filterMarketplace, setFilterMarketplace] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
   const [filterPriority, setFilterPriority] = useState("");
-  const [showMap] = useState(false);
+  const [showGlobe, setShowGlobe] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     fetchData();
@@ -91,12 +96,34 @@ export default function SellerTable() {
         <KPICard label="Low" value={stats.low} color="#770031" accent={false} />
       </div>
 
-      {/* Map placeholder — will be replaced by 3D globe */}
-      {showMap && !loading && sellers.length > 0 && (
-        <div className="animate-fade-in">
-          <div className="mirakl-card-elevated p-6 text-center" style={{ color: "#6B7280" }}>
-            Globe 3D en cours d&apos;intégration...
-          </div>
+      {/* 3D Globe */}
+      <div className="flex items-center justify-between">
+        <button
+          onClick={() => setShowGlobe(!showGlobe)}
+          className="text-[13px] font-bold transition-colors"
+          style={{ color: "#2764FF" }}
+        >
+          {showGlobe ? "Masquer le globe" : "Afficher le globe"}
+        </button>
+      </div>
+      {showGlobe && !loading && sellers.length > 0 && (
+        <div className="animate-fade-in mirakl-card-dark overflow-hidden">
+          <Globe3D
+            sellers={sellers.map((s) => ({
+              id: s.id,
+              name: s.seller_name,
+              country: s.country?.code || "EU",
+              score: s.match_score || 0,
+              marketplace: s.marketplace?.["marketplace name"] || "",
+            }))}
+            onSellerClick={(id) => router.push(`/seller/${id}`)}
+            onMarketplaceClick={(name) => {
+              const mp = marketplaces.find(
+                (m) => m["marketplace name"].toLowerCase() === name.toLowerCase()
+              );
+              if (mp) setFilterMarketplace(mp.id);
+            }}
+          />
         </div>
       )}
 
