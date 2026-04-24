@@ -1,5 +1,3 @@
-// Types matching Supabase schema
-
 export interface Seller {
   id: string;
   seller_name: string;
@@ -15,14 +13,21 @@ export interface Seller {
   top_match_marketplace_id: string | null;
   amazon_presence: boolean | null;
   amazon_product_count: number | null;
+  company_domain: string | null;
   status: string | null;
   enriched_at: string | null;
   created_at: string | null;
-  // Joined fields
+  contact_name?: string | null;
+  contact_email?: string | null;
+  contact_job_title?: string | null;
+  contact_linkedin?: string | null;
+  contact_confidence?: number | null;
   category?: { label: string } | null;
   country?: { label: string; code: string } | null;
   price_category?: { label: string } | null;
   distribution_type?: { label: string } | null;
+  customer_category?: { label: string } | null;
+  seasonality?: { label: string } | null;
   marketplace?: { "marketplace name": string } | null;
 }
 
@@ -42,6 +47,11 @@ export interface RefCountry {
   id: string;
   label: string;
   code: string;
+}
+
+export interface RefOption {
+  id: string;
+  label: string;
 }
 
 export interface MarketplaceProfile {
@@ -85,3 +95,26 @@ export interface CompetitorAnalysis {
   }[];
   marketTrend: string;
 }
+
+export type {
+  ActiveTab,
+  AnalysisKind,
+  DraftEmail,
+  MarketplaceProfileRecord,
+  MarketplaceRecommendation,
+  MatchingBrandProfile,
+  OutreachStrategy,
+  PipelineStage,
+  PriorityLevel,
+  ProspectionMode,
+  RecommendedContact,
+  ScoreBreakdownItem,
+  ScoreWeightKey,
+  SellerCampaignRecord,
+  SellerIntelligenceSnapshot,
+  SpecificCampaign,
+  WorkspaceAnalysis,
+} from "./bdr-engine";
+
+export type SellerRecord = import("./bdr-engine").SellerCampaignRecord;
+export type ScoredSellerResult = import("./bdr-engine").MarketplaceRecommendation;

@@ -1,92 +1,65 @@
 import { NextRequest } from "next/server";
-import { analyzeMarketplace } from "@/lib/openai";
-import { getAllSellersForScoring } from "@/lib/supabase";
-import { scoreSellerForProfile } from "@/lib/scoring";
-import type { MarketplaceProfile } from "@/lib/types";
+import { analyzeBrandProfile } from "@/lib/openai";
+import { computeBrandToMarketplaceRanking } from "@/lib/bdr-engine";
+import { getMatchingResults } from "@/lib/supabase-matching";
+import type { MatchingBrandProfile } from "@/lib/types";
 
 export async function POST(request: NextRequest) {
   try {
-    const { marketplaceName } = await request.json();
+    const { brandName, domain } = await request.json();
 
-    if (!marketplaceName) {
-      return Response.json(
-        { error: "marketplaceName required" },
-        { status: 400 }
-      );
+    if (!brandName) {
+      return Response.json({ error: "brandName required" }, { status: 400 });
     }
 
-    // Step 1: Analyze marketplace with GPT-4o
-    const profile: MarketplaceProfile =
-      await analyzeMarketplace(marketplaceName);
+    const matching = await getMatchingResults(brandName, domain || "");
 
-    // Step 2: Get all sellers from Supabase
-    const sellers = await getAllSellersForScoring();
+    let brandProfile: MatchingBrandProfile;
+    try {
+      brandProfile = await analyzeBrandProfile({
+        brandName,
+        companyDomain: domain,
+      });
+    } catch {
+      brandProfile = {
+        brandName,
+        companyDomain: domain || "",
+        focusCategories: ["fashion"],
+        priceBands: ["mid"],
+        targetCountries: ["FR"],
+        customerPositioning: ["unisex"],
+        catalogueExpectation: ["medium"],
+        distributionModel: ["mono-brand"],
+        seasonalMoments: ["always_on"],
+      };
+    }
 
-    // Step 3: Score each seller against this new marketplace profile
-    const scoredSellers = (sellers || [])
-      .map((seller) => {
-        const category = seller.category?.label || "";
-        const country = seller.country?.code || "";
-        const priceLabel = seller.price_category?.label || "";
-        const priceRange = priceLabel.includes("budget")
-          ? "budget"
-          : priceLabel.includes("mid")
-            ? "mid"
-            : priceLabel.includes("premium")
-              ? "premium"
-              : priceLabel.includes("luxury")
-                ? "luxury"
-                : "mid";
-
-        // Check if seller is a known brand on this marketplace
-        const isAlreadyPresent = profile.known_brands?.some(
-          (brand) =>
-            brand.toLowerCase() === seller.seller_name.toLowerCase() ||
-            seller.seller_name.toLowerCase().includes(brand.toLowerCase()) ||
-            brand.toLowerCase().includes(seller.seller_name.toLowerCase())
-        );
-
-        if (isAlreadyPresent) return null;
-
-        const score = scoreSellerForProfile(
-          {
-            category,
-            priceRange,
-            country,
-            catalogueSize: seller.catalogue_size || "Unknown",
-          },
-          profile
-        );
-
-        return {
-          id: seller.id,
-          name: seller.seller_name,
-          category,
-          country,
-          priceRange: priceLabel,
-          catalogueSize: seller.catalogue_size,
-          score,
-          priority:
-            score >= 70 ? "HIGH" : score >= 50 ? "MEDIUM" : "LOW",
-        };
-      })
-      .filter(Boolean)
-      .sort(
-        (a, b) => (b?.score || 0) - (a?.score || 0)
-      );
+    const recommendations = computeBrandToMarketplaceRanking(
+      brandProfile,
+      matching.profiles
+    );
 
     return Response.json({
-      marketplace: profile,
-      sellers: scoredSellers,
-      totalSellers: scoredSellers.length,
-      highPriority: scoredSellers.filter((s) => s?.priority === "HIGH").length,
-      mediumPriority: scoredSellers.filter((s) => s?.priority === "MEDIUM")
-        .length,
+      brandProfile,
+      recommendations,
+      totalMarketplaces: recommendations.length,
+      averageScore:
+        recommendations.length > 0
+          ? Math.round(
+              recommendations.reduce((total, item) => total + item.score, 0) /
+                recommendations.length
+            )
+          : 0,
+      highPriority: recommendations.filter(
+        (item) => item.priority === "HOT" || item.priority === "HIGH"
+      ).length,
+      source: matching.source,
+      message: matching.message,
     });
   } catch (error) {
     console.error("Error in marketplace research:", error);
     return Response.json(
-      { error: "Failed to analyze marketplace" },
+      { error: "Failed to analyze brand matching" },
       { status: 500 }
     );
   }

@@ -26,12 +26,12 @@
   --color-text-body: var(--text-body);
   --color-border: var(--border);
   --color-muted: var(--muted);
-  --font-sans: var(--font-roboto-serif), serif;
-  --font-mono: var(--font-geist-mono);
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, monospace;
 }
 
 * {
-  font-family: var(--font-roboto-serif), serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 body {
