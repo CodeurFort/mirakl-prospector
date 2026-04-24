@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mirakl Prospector
 
-## Getting Started
+BDR tooling for Mirakl Connect. Qualifies e-commerce brands against marketplace profiles, enriches their decision-maker contacts, and generates ready-to-send email sequences.
 
-First, run the development server:
+**Production** : https://mirakl-prospector.vercel.app
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Repository layout
+
+```
+mirakl-prospector/          # Next.js 16 App Router · deployed on Vercel
+├── src/
+│   ├── app/                # pages + API routes
+│   │   └── api/            # 9 route handlers (all pure TS, no Python spawn)
+│   ├── components/         # React 19 UI (Tailwind 4, Zustand state)
+│   ├── lib/                # scoring engine + OpenAI prompts + Supabase client
+│   └── store/              # Zustand workspace store (persists in localStorage)
+│
+├── scraper/                # Python 3 toolkit · runs locally, not on Vercel
+│   ├── main.py             # marketplace scrape (Zalando, La Redoute, …)
+│   ├── find_contacts.py    # Apify Google → LinkedIn profiles → names + titles
+│   ├── enrich_hybrid.py    # Better Contact + pattern/MX/SMTP probe
+│   └── …
+│
+└── deliverable/            # technical export package (see deliverable/README.md)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Quick start
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Next.js app
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+cp .env.example .env.local
+# fill in SUPABASE, OPENAI, BETTERCONTACT, SMTP keys
+npm install
+npm run dev
+```
 
-## Learn More
+### Python scraper (optional, laptop-only)
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+cd scraper
+python3 -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+# fill in keys
+python3 find_contacts.py
+python3 enrich_hybrid.py
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Tech stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Layer | Tech |
+|---|---|
+| Frontend | Next.js 16, React 19, Tailwind 4, Zustand, Recharts |
+| Backend | Next.js API routes (Node runtime, serverless) |
+| LLM | OpenAI GPT-4o (classification + email generation) |
+| Enrichment | Better Contact API, Apify Google Search, DNS/SMTP probe |
+| DB | Supabase (PostgreSQL) |
+| Email | nodemailer over Google Workspace SMTP |
+| Hosting | Vercel (auto-deploy from `main`) |
 
-## Deploy on Vercel
+## Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Connected to Vercel (project `mirakl-prospector`, team `codeurfort`). Push to `main` deploys automatically. Production URL : https://mirakl-prospector.vercel.app
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Env vars are managed via `vercel env add`. See `deliverable/DEPLOY.md` for the full procedure.
+
+## Documentation
+
+See the [`deliverable/`](./deliverable) folder for the complete technical package (architecture, prompts, scoring, schema, costs).

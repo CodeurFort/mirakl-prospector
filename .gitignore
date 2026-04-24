@@ -32,6 +32,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -39,3 +40,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Python scraper (scraper/ subfolder)
+scraper/__pycache__/
+scraper/**/__pycache__/
+scraper/*.pyc
+scraper/venv/
+scraper/.venv/
+scraper/mirakl_sellers_*.csv
+scraper/*.log
