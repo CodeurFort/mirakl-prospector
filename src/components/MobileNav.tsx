@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useWorkspaceStore } from "@/store/useWorkspaceStore";
 import { useLanguage, useT } from "@/lib/i18n";
 import type { ActiveTab } from "@/lib/types";
@@ -28,15 +29,17 @@ export function MobileNav() {
           borderBottom: "1px solid rgba(255,255,255,0.08)",
         }}
       >
-        <div className="flex items-center gap-2.5">
-          <div
-            className="w-7 h-7 rounded flex items-center justify-center text-[12px] font-bold"
-            style={{ background: "#2764FF", color: "#FFFFFF" }}
-          >
-            M
-          </div>
-          <span className="text-[14px] font-bold" style={{ color: "#FFFFFF" }}>
-            Mirakl Prospector
+        <div className="flex items-center gap-2">
+          <Image
+            src="/logo-mirakl.png"
+            alt="Mirakl"
+            width={80}
+            height={18}
+            priority
+            className="h-[18px] w-auto"
+          />
+          <span className="text-[12px]" style={{ color: "rgba(255,255,255,0.5)" }}>
+            Prospector
           </span>
         </div>
 

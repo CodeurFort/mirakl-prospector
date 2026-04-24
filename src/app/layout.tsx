@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Image from "next/image";
 import "./globals.css";
 import { MobileNav } from "@/components/MobileNav";
 import { TabBar } from "@/components/layout/TabBar";
@@ -27,17 +28,15 @@ export default function RootLayout({
         {/* Sidebar — desktop only */}
         <aside className="hidden lg:flex w-[260px] bg-primary-dark text-white flex-col shrink-0 h-screen sticky top-0">
           <div className="px-6 py-6 border-b border-white/10">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded bg-primary-accent flex items-center justify-center text-sm font-bold">
-                M
-              </div>
-              <div>
-                <h1 className="text-[16px] font-bold leading-[26px] tracking-tight">
-                  Mirakl Connect
-                </h1>
-                <p className="text-[12px] opacity-50">Seller Intelligence</p>
-              </div>
-            </div>
+            <Image
+              src="/logo-mirakl.png"
+              alt="Mirakl"
+              width={110}
+              height={24}
+              priority
+              className="h-6 w-auto"
+            />
+            <p className="mt-3 text-[12px] opacity-50">Connect · Seller Intelligence</p>
           </div>
           <TabBar />
           <div className="p-4 mx-4 mb-4 rounded-lg bg-white/5">
