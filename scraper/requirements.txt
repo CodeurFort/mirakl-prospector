@@ -3,3 +3,4 @@ beautifulsoup4>=4.12
 supabase>=2.0
 python-dotenv>=1.0
 duckduckgo_search>=8.0
+dnspython>=2.4

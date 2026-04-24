@@ -1,0 +1,68 @@
+name: Weekly seller enrichment
+
+# Monday 07:00 UTC (09:00 Paris). Also manually triggerable from the Actions tab.
+on:
+  schedule:
+    - cron: '0 7 * * 1'
+  workflow_dispatch:
+    inputs:
+      run_find_contacts:
+        description: 'Run find_contacts.py (Apify Google Search, costs credits)'
+        type: boolean
+        default: true
+      run_fast_patterns:
+        description: 'Run fast_patterns.py (DNS MX lookup, free)'
+        type: boolean
+        default: true
+
+jobs:
+  enrich:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+      BETTERCONTACT_API_KEY: ${{ secrets.BETTERCONTACT_API_KEY }}
+      BETTERCONTACT_API_KEY_FALLBACK: ${{ secrets.BETTERCONTACT_API_KEY_FALLBACK }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: scraper/requirements.txt
+
+      - name: Install dependencies
+        working-directory: scraper
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Find new contact names (Apify Google Search)
+        if: ${{ github.event_name == 'schedule' || github.event.inputs.run_find_contacts == 'true' }}
+        working-directory: scraper
+        run: |
+          echo "::group::find_contacts.py"
+          python -u find_contacts.py
+          echo "::endgroup::"
+
+      - name: Enrich emails via MX-verified pattern matching
+        if: ${{ github.event_name == 'schedule' || github.event.inputs.run_fast_patterns == 'true' }}
+        working-directory: scraper
+        run: |
+          echo "::group::fast_patterns.py"
+          python -u fast_patterns.py
+          echo "::endgroup::"
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Weekly enrichment run — $(date -u +'%Y-%m-%d %H:%M UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Triggered by: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "Status: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
