@@ -72,6 +72,21 @@ function looksLikeCreditsOrAuthError(httpStatus: number, body: unknown): boolean
 // Map taskId → the key that submitted it, so polling reuses the same key.
 const TASK_KEY: Map<string, string> = new Map();
 
+// BC silently queues a task as "on hold" when the key is out of credits — no 402
+// is raised. We have to probe the status right after submit to catch that case.
+async function bcIsOnHold(key: string, taskId: string): Promise<boolean> {
+  try {
+    const res = await fetch(`${BC_BASE}/async/${taskId}`, {
+      headers: { "X-API-Key": key },
+    });
+    const body = (await res.json().catch(() => ({}))) as BetterContactResponse & { message?: string };
+    const msg = (body.message || "").toLowerCase();
+    return body.status === "on hold" || msg.includes("top-up") || msg.includes("credit");
+  } catch {
+    return false;
+  }
+}
+
 async function bcSubmit(payload: {
   first_name?: string;
   last_name?: string;
@@ -95,13 +110,19 @@ async function bcSubmit(payload: {
     const json = (await res.json().catch(() => ({}))) as BetterContactResponse;
 
     if (!res.ok || !json.id) {
-      const isFallbackCandidate = looksLikeCreditsOrAuthError(res.status, json);
-      if (isFallbackCandidate && i < keys.length - 1) {
-        console.warn(`BC primary key failed (${res.status}), trying fallback...`);
+      if (looksLikeCreditsOrAuthError(res.status, json) && i < keys.length - 1) {
+        console.warn(`BC key #${i + 1} failed (${res.status}), switching...`);
         continue;
       }
       return null;
     }
+
+    // Silent on-hold detection
+    if (await bcIsOnHold(key, json.id) && i < keys.length - 1) {
+      console.warn(`BC key #${i + 1} out of credits (task ${json.id} on hold), switching...`);
+      continue;
+    }
+
     TASK_KEY.set(json.id, key);
     return json.id;
   }
