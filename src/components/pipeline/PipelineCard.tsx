@@ -1,6 +1,7 @@
 "use client";
 
 import type { SellerRecord } from "@/lib/types";
+import { useT } from "@/lib/i18n";
 import { PriorityBadge } from "@/components/shared/PriorityBadge";
 
 interface PipelineCardProps {
@@ -20,14 +21,15 @@ export function PipelineCard({
   onReturnToProspection,
   isLastStage,
 }: PipelineCardProps) {
+  const t = useT();
   const seller = record.seller;
   const score = record.totalScore || seller.match_score || 0;
   const emailCount = record.emails.length;
 
-  const nextLabels: Record<string, string> = {
-    ready: "Enroller",
-    in_sequence: "Marquer envoye",
-    sent: "Marquer repondu",
+  const nextKey: Record<string, string> = {
+    ready: "pipeline.card.next.ready",
+    in_sequence: "pipeline.card.next.in_sequence",
+    sent: "pipeline.card.next.sent",
   };
 
   return (
@@ -69,7 +71,7 @@ export function PipelineCard({
             </span>
           );
         })}
-        <span className="ml-1 text-[9px]" style={{ color: "#6B7280" }}>{emailCount}/3 mails</span>
+        <span className="ml-1 text-[9px]" style={{ color: "#6B7280" }}>{t("pipeline.card.mails_count", { n: emailCount })}</span>
       </div>
 
       <div className="space-y-2">
@@ -79,7 +81,7 @@ export function PipelineCard({
             className="w-full rounded-md py-1.5 text-[11px] font-bold transition-all hover:opacity-80"
             style={{ background: `${stageColor}12`, color: stageColor, border: `1px solid ${stageColor}30` }}
           >
-            {nextLabels[record.pipelineStage] || "Avancer"} →
+            {t(nextKey[record.pipelineStage] || "pipeline.card.next.default")} →
           </button>
         )}
 
@@ -89,7 +91,7 @@ export function PipelineCard({
             className="w-full rounded-md py-1.5 text-[11px] font-bold"
             style={{ background: "#F7FAFD", color: "#425063", border: "1px solid #D6DEE8" }}
           >
-            ← Reculer
+            {t("pipeline.card.regress")}
           </button>
         )}
 
@@ -99,13 +101,13 @@ export function PipelineCard({
             className="w-full rounded-md py-1.5 text-[11px] font-bold"
             style={{ background: "#FFE9E9", color: "#B42318", border: "1px solid #F3C8C7" }}
           >
-            Retour Prospection
+            {t("pipeline.card.return_prospection")}
           </button>
         )}
 
         {isLastStage && (
           <div className="w-full rounded-md py-1.5 text-center text-[11px] font-bold" style={{ background: "#E8F5E9", color: "#2E7D32" }}>
-            Repondu ✓
+            {t("pipeline.card.replied_final")}
           </div>
         )}
       </div>

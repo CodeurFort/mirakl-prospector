@@ -5,7 +5,7 @@ import { TabBar } from "@/components/layout/TabBar";
 
 export const metadata: Metadata = {
   title: "Mirakl Connect Prospector",
-  description: "Outil de prospection intelligent pour Mirakl Connect",
+  description: "Smart prospection tool for Mirakl Connect",
 };
 
 export const viewport: Viewport = {
@@ -22,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className="h-full antialiased">
+    <html lang="en" className="h-full antialiased">
       <body className="h-full overflow-hidden flex">
         {/* Sidebar — desktop only */}
         <aside className="hidden lg:flex w-[260px] bg-primary-dark text-white flex-col shrink-0 h-screen sticky top-0">

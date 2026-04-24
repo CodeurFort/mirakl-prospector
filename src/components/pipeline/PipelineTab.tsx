@@ -1,14 +1,15 @@
 "use client";
 
 import { useWorkspaceStore } from "@/store/useWorkspaceStore";
+import { useT } from "@/lib/i18n";
 import type { PipelineStage } from "@/lib/types";
 import { PipelineCard } from "./PipelineCard";
 
-const COLUMNS: { stage: PipelineStage; label: string; color: string; bg: string }[] = [
-  { stage: "ready", label: "Ready", color: "#2764FF", bg: "rgba(39,100,255,0.06)" },
-  { stage: "in_sequence", label: "In Sequence", color: "#E65100", bg: "rgba(230,81,0,0.06)" },
-  { stage: "sent", label: "Sent", color: "#2E7D32", bg: "rgba(46,125,50,0.06)" },
-  { stage: "replied", label: "Replied", color: "#7C3AED", bg: "rgba(124,58,237,0.06)" },
+const COLUMNS: { stage: PipelineStage; labelKey: string; color: string; bg: string }[] = [
+  { stage: "ready", labelKey: "pipeline.stage.ready", color: "#2764FF", bg: "rgba(39,100,255,0.06)" },
+  { stage: "in_sequence", labelKey: "pipeline.stage.in_sequence", color: "#E65100", bg: "rgba(230,81,0,0.06)" },
+  { stage: "sent", labelKey: "pipeline.stage.sent", color: "#2E7D32", bg: "rgba(46,125,50,0.06)" },
+  { stage: "replied", labelKey: "pipeline.stage.replied", color: "#7C3AED", bg: "rgba(124,58,237,0.06)" },
 ];
 
 export function PipelineTab() {
@@ -16,6 +17,7 @@ export function PipelineTab() {
   const advanceStage = useWorkspaceStore((s) => s.advanceStage);
   const regressStage = useWorkspaceStore((s) => s.regressStage);
   const returnToProspection = useWorkspaceStore((s) => s.returnToProspection);
+  const t = useT();
 
   const byStage = (stage: PipelineStage) => sellerRecords.filter((record) => record.pipelineStage === stage);
 
@@ -23,10 +25,10 @@ export function PipelineTab() {
     <div className="h-full p-4 pt-[68px] lg:p-8 lg:pt-4 pb-16 lg:pb-8" style={{ maxWidth: 1400 }}>
       <div className="mb-6">
         <h1 className="font-bold" style={{ fontSize: 22, lineHeight: "32px", color: "#03182F" }}>
-          Pipeline
+          {t("pipeline.title_long")}
         </h1>
         <p className="mt-1" style={{ fontSize: 14, color: "#30373E" }}>
-          Suivez la progression de vos sequences d'outreach
+          {t("pipeline.subtitle_long")}
         </p>
       </div>
 
@@ -40,9 +42,9 @@ export function PipelineTab() {
               <rect x="3" y="16" width="7" height="5" rx="1" />
             </svg>
           </div>
-          <p className="text-[16px] font-bold" style={{ color: "#03182F" }}>Pipeline vide</p>
+          <p className="text-[16px] font-bold" style={{ color: "#03182F" }}>{t("pipeline.empty")}</p>
           <p className="mt-2 text-[13px]" style={{ color: "#6B7280" }}>
-            Les sellers pousses depuis Prospection apparaitront ici
+            {t("outreach.empty_hint")}
           </p>
         </div>
       ) : (
@@ -54,7 +56,7 @@ export function PipelineTab() {
                 <div className="flex items-center justify-between px-4 py-3" style={{ borderBottom: `2px solid ${column.color}20` }}>
                   <div className="flex items-center gap-2">
                     <span className="h-2 w-2 rounded-full" style={{ background: column.color }} />
-                    <span className="text-[13px] font-bold" style={{ color: column.color }}>{column.label}</span>
+                    <span className="text-[13px] font-bold" style={{ color: column.color }}>{t(column.labelKey)}</span>
                   </div>
                   <span
                     className="rounded-full px-2 py-0.5 text-[11px] font-bold"
@@ -77,7 +79,7 @@ export function PipelineTab() {
                     />
                   ))}
                   {records.length === 0 && (
-                    <p className="py-8 text-center text-[11px]" style={{ color: "#6B7280" }}>Aucun seller</p>
+                    <p className="py-8 text-center text-[11px]" style={{ color: "#6B7280" }}>{t("pipeline.empty_stage")}</p>
                   )}
                 </div>
               </div>

@@ -1,18 +1,11 @@
 "use client";
 
 import type { ProspectionMode } from "@/lib/types";
+import { useT } from "@/lib/i18n";
 
-const MODES: { key: ProspectionMode; label: string; sub: string }[] = [
-  {
-    key: "bulk",
-    label: "Par marketplace",
-    sub: "Explorer les sellers Supabase",
-  },
-  {
-    key: "specific",
-    label: "Par vendeur",
-    sub: "Scraping & scoring ciblé",
-  },
+const MODES: { key: ProspectionMode; labelKey: string; subKey: string }[] = [
+  { key: "bulk", labelKey: "mode.bulk.label", subKey: "mode.bulk.sub" },
+  { key: "specific", labelKey: "mode.specific.label", subKey: "mode.specific.sub" },
 ];
 
 export function ModeToggle({
@@ -22,6 +15,7 @@ export function ModeToggle({
   mode: ProspectionMode;
   onChange: (m: ProspectionMode) => void;
 }) {
+  const t = useT();
   return (
     <div className="flex gap-2">
       {MODES.map((m) => {
@@ -38,12 +32,12 @@ export function ModeToggle({
               minWidth: 140,
             }}
           >
-            <span className="text-[13px] font-bold">{m.label}</span>
+            <span className="text-[13px] font-bold">{t(m.labelKey)}</span>
             <span
               className="text-[11px] mt-0.5"
               style={{ opacity: active ? 0.8 : 0.5 }}
             >
-              {m.sub}
+              {t(m.subKey)}
             </span>
           </button>
         );

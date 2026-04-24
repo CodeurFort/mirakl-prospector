@@ -1,5 +1,7 @@
 "use client";
 
+import { useT } from "@/lib/i18n";
+
 interface CampaignConfirmProps {
   marketplaceName: string;
   selectedCount: number;
@@ -8,16 +10,17 @@ interface CampaignConfirmProps {
 }
 
 export function CampaignConfirm({ marketplaceName, selectedCount, onConfirm, onClose }: CampaignConfirmProps) {
+  const t = useT();
   return (
     <>
       <div className="fixed inset-0 bg-black/60 z-50" onClick={onClose} />
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md animate-fade-in">
         <div className="mirakl-card-elevated p-6">
           <h3 className="text-[18px] font-bold mb-2" style={{ color: "#03182F" }}>
-            Créer un brief Outreach
+            {t("confirm.create_brief")}
           </h3>
           <p className="text-[14px] mb-6" style={{ color: "#6B7280" }}>
-            {selectedCount} seller{selectedCount > 1 ? "s" : ""} sélectionné{selectedCount > 1 ? "s" : ""} pour la marketplace <strong style={{ color: "#03182F" }}>{marketplaceName}</strong> seront ajoutés à votre onglet Outreach.
+            {t("confirm.message", { n: selectedCount, name: marketplaceName })}
           </p>
 
           <div className="rounded-lg p-4 mb-6" style={{ background: "#F2F8FF" }}>
@@ -33,7 +36,7 @@ export function CampaignConfirm({ marketplaceName, selectedCount, onConfirm, onC
                   {selectedCount} sellers → Outreach
                 </p>
                 <p className="text-[11px]" style={{ color: "#6B7280" }}>
-                  Vous pourrez générer les emails depuis l&apos;onglet Outreach
+                  {t("confirm.hint")}
                 </p>
               </div>
             </div>
@@ -45,14 +48,14 @@ export function CampaignConfirm({ marketplaceName, selectedCount, onConfirm, onC
               className="flex-1 py-3 rounded-lg text-[13px] font-bold"
               style={{ border: "1px solid #E2E8F0", color: "#03182F" }}
             >
-              Annuler
+              {t("confirm.cancel_btn")}
             </button>
             <button
               onClick={onConfirm}
               className="flex-1 py-3 rounded-lg text-[13px] font-bold transition-all hover:shadow-lg"
               style={{ background: "#2764FF", color: "#FFFFFF" }}
             >
-              Confirmer
+              {t("confirm.confirm_btn")}
             </button>
           </div>
         </div>

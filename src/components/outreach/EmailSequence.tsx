@@ -46,7 +46,7 @@ export function EmailSequence({ record, generatingMail, onGenerateMail, onGenera
 
   async function sendEmail() {
     if (!currentEmail) return;
-    const to = window.prompt("Envoyer à :", defaultRecipient);
+    const to = window.prompt(t("emails.send_prompt"), defaultRecipient);
     if (!to) return;
 
     setSendStatus("sending");

@@ -1,6 +1,9 @@
+"use client";
+
 import type { SellerIntelligenceSnapshot } from "@/lib/types";
 import { Badge } from "@/components/shared/Badge";
 import { PriorityBadge } from "@/components/shared/PriorityBadge";
+import { useT } from "@/lib/i18n";
 
 interface SellerProspectionCardProps {
   result: SellerIntelligenceSnapshot;
@@ -17,6 +20,7 @@ export function SellerProspectionCard({
   onExplain,
   onPush,
 }: SellerProspectionCardProps) {
+  const t = useT();
   const top = result.topRecommendation;
 
   return (
@@ -37,7 +41,7 @@ export function SellerProspectionCard({
             <h3 className="text-[20px] font-bold" style={{ color: "#03182F" }}>
               {result.seller.seller_name}
             </h3>
-            <Badge tone="slate">{top?.marketplaceName || "Operateur a preciser"}</Badge>
+            <Badge tone="slate">{top?.marketplaceName || t("card.operator_tbd")}</Badge>
             <PriorityBadge score={result.totalScore} />
           </div>
           <p className="mt-2 text-[13px] leading-6" style={{ color: "#4D5B6D" }}>
@@ -49,7 +53,7 @@ export function SellerProspectionCard({
             {Math.round(result.totalScore)}
           </p>
           <p className="text-[11px]" style={{ color: "#6D7C8C" }}>
-            score seller
+            {t("card.score_seller")}
           </p>
         </div>
       </div>
@@ -57,7 +61,7 @@ export function SellerProspectionCard({
       <div className="mt-5 grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
         <div>
           <p className="text-[11px] font-bold uppercase tracking-[0.18em]" style={{ color: "#6F7F90" }}>
-            Score breakdown
+            {t("card.score_breakdown")}
           </p>
           <div className="mt-3 space-y-3">
             {result.scoreBreakdown.map((criterion) => (
@@ -84,7 +88,7 @@ export function SellerProspectionCard({
         <div className="space-y-4">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.18em]" style={{ color: "#6F7F90" }}>
-              Signaux
+              {t("card.signals")}
             </p>
             <div className="mt-2 flex flex-wrap gap-2">
               {result.signals.map((signal) => (
@@ -96,7 +100,7 @@ export function SellerProspectionCard({
           </div>
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.18em]" style={{ color: "#6F7F90" }}>
-              Strategie recommandee
+              {t("card.strategy_recommended")}
             </p>
             <div className="mt-2 flex flex-wrap gap-2">
               <Badge tone="blue">{result.strategy.method}</Badge>
@@ -106,7 +110,7 @@ export function SellerProspectionCard({
           </div>
           <div className="rounded-2xl border p-4" style={{ borderColor: "#E2E8F0", background: "#F9FBFD" }}>
             <p className="text-[11px] font-bold uppercase tracking-[0.18em]" style={{ color: "#6F7F90" }}>
-              Contact recommande
+              {t("card.contact_recommended")}
             </p>
             <p className="mt-2 text-[14px] font-bold" style={{ color: "#03182F" }}>
               {result.recommendedContact.role}
@@ -124,14 +128,14 @@ export function SellerProspectionCard({
           className="rounded-2xl px-4 py-3 text-[13px] font-bold"
           style={{ background: "#F2F8FF", color: "#2251CC" }}
         >
-          Voir explicabilite
+          {t("card.see_explainability")}
         </button>
         <button
           onClick={onPush}
           className="rounded-2xl px-4 py-3 text-[13px] font-bold"
           style={{ background: "#03182F", color: "#FFFFFF" }}
         >
-          Push Outreach
+          {t("card.push_outreach_btn")}
         </button>
       </div>
     </div>

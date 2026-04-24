@@ -2,6 +2,7 @@
 
 import type { SellerIntelligenceSnapshot } from "@/lib/types";
 import { Badge } from "@/components/shared/Badge";
+import { useT } from "@/lib/i18n";
 
 interface ExplainabilityDrawerProps {
   result: SellerIntelligenceSnapshot | null;
@@ -9,6 +10,7 @@ interface ExplainabilityDrawerProps {
 }
 
 export function ExplainabilityDrawer({ result, onClose }: ExplainabilityDrawerProps) {
+  const t = useT();
   if (!result) return null;
 
   return (
@@ -21,7 +23,7 @@ export function ExplainabilityDrawer({ result, onClose }: ExplainabilityDrawerPr
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.18em]" style={{ color: "#6E7D90" }}>
-              Explainability
+              {t("explain.header")}
             </p>
             <h2 className="mt-2 text-[22px] font-bold" style={{ color: "#03182F" }}>
               {result.seller.seller_name}
@@ -35,7 +37,7 @@ export function ExplainabilityDrawer({ result, onClose }: ExplainabilityDrawerPr
             className="rounded-xl px-3 py-2 text-[12px] font-bold"
             style={{ background: "#F3F6FA", color: "#425063" }}
           >
-            Fermer
+            {t("explain.close")}
           </button>
         </div>
 
@@ -56,7 +58,7 @@ export function ExplainabilityDrawer({ result, onClose }: ExplainabilityDrawerPr
                     {criterion.score}
                   </p>
                   <p className="text-[10px]" style={{ color: "#6E7D90" }}>
-                    poids {criterion.weight}%
+                    {t("explain.weight_label", { n: criterion.weight })}
                   </p>
                 </div>
               </div>
@@ -72,7 +74,7 @@ export function ExplainabilityDrawer({ result, onClose }: ExplainabilityDrawerPr
 
         <div className="mt-6">
           <p className="text-[11px] font-bold uppercase tracking-[0.18em]" style={{ color: "#6E7D90" }}>
-            Scores operateurs
+            {t("explain.operator_scores")}
           </p>
           <div className="mt-3 space-y-3">
             {result.operatorScores.map((operator) => (
@@ -95,7 +97,7 @@ export function ExplainabilityDrawer({ result, onClose }: ExplainabilityDrawerPr
 
         <div className="mt-6">
           <p className="text-[11px] font-bold uppercase tracking-[0.18em]" style={{ color: "#6E7D90" }}>
-            Signaux detectes
+            {t("explain.signals_detected")}
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
             {result.signals.map((signal) => (

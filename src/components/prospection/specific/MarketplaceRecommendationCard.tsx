@@ -43,7 +43,7 @@ export function MarketplaceRecommendationCard({
               {Math.round(recommendation.score)}
             </p>
             <p className="text-[11px]" style={{ color: "#6C7B8B" }}>
-              score match
+              {t("mp_card.score_match")}
             </p>
           </div>
           <PriorityBadge score={recommendation.score} />
@@ -59,7 +59,7 @@ export function MarketplaceRecommendationCard({
       <div className="mt-5 grid gap-4 lg:grid-cols-2">
         <div>
           <p className="text-[11px] font-bold uppercase tracking-[0.18em]" style={{ color: "#6F7F90" }}>
-            Why it matches
+            {t("mp_card.why_it_matches")}
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
             {recommendation.whyItMatches.map((reason) => (
@@ -71,7 +71,7 @@ export function MarketplaceRecommendationCard({
         </div>
         <div>
           <p className="text-[11px] font-bold uppercase tracking-[0.18em]" style={{ color: "#6F7F90" }}>
-            Caution
+            {t("mp_card.caution")}
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
             {recommendation.cautions.map((reason) => (
@@ -86,7 +86,7 @@ export function MarketplaceRecommendationCard({
       <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_auto]">
         <div>
           <p className="text-[11px] font-bold uppercase tracking-[0.18em]" style={{ color: "#6F7F90" }}>
-            Matching signals
+            {t("mp_card.matching_signals")}
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
             {recommendation.matchingSignals.slice(0, 3).map((signal) => (
@@ -98,7 +98,7 @@ export function MarketplaceRecommendationCard({
         </div>
         <div>
           <p className="text-[11px] font-bold uppercase tracking-[0.18em]" style={{ color: "#6F7F90" }}>
-            Roles to scrape
+            {t("mp_card.roles_to_scrape")}
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
             {recommendation.rolesToScrape.slice(0, 3).map((role) => (

@@ -14,6 +14,7 @@ import type {
 } from "@/lib/types";
 import { computeCriteria } from "@/lib/bdr-engine";
 import { useWorkspaceStore } from "@/store/useWorkspaceStore";
+import { useT } from "@/lib/i18n";
 import { ModeToggle } from "../ModeToggle";
 import { FieldHeader } from "../shared/FieldHeader";
 import { RolePicker } from "../shared/RolePicker";
@@ -90,6 +91,7 @@ export function BulkDashboard({ mode, onModeChange }: BulkDashboardProps) {
   const isInOutreach = useWorkspaceStore((s) => s.isInOutreach);
   const ingestAnalysis = useWorkspaceStore((s) => s.ingestAnalysis);
   const setActiveTab = useWorkspaceStore((s) => s.setActiveTab);
+  const t = useT();
 
   async function fetchSellers(query?: URLSearchParams) {
     const response = await fetch(`/api/sellers${query ? `?${query.toString()}` : ""}`);
@@ -210,14 +212,14 @@ export function BulkDashboard({ mode, onModeChange }: BulkDashboardProps) {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="text-[11px] font-bold px-2 py-0.5 rounded-full" style={{ background: "#E8F0FE", color: "#2764FF" }}>
-              PAR MARKETPLACE
+              {t("bulk.badge")}
             </span>
           </div>
           <h1 className="font-bold" style={{ fontSize: 24, lineHeight: "34px", color: "#03182F" }}>
-            Explorer les sellers par marketplace
+            {t("bulk.hero_title")}
           </h1>
           <p className="mt-2 text-[14px]" style={{ color: "#425063" }}>
-            Sélectionnez un opérateur cible, filtrez le catalogue Supabase et scorez les sellers les plus adaptés.
+            {t("bulk.subtitle_long")}
           </p>
         </div>
         <ModeToggle mode={mode} onChange={onModeChange} />
@@ -227,56 +229,56 @@ export function BulkDashboard({ mode, onModeChange }: BulkDashboardProps) {
         <div className="mirakl-card-elevated rounded-[30px] p-5">
           <div className="space-y-5">
             <div>
-              <FieldHeader label="Recherche seller" hint="Recherche libre sur le nom du seller." />
+              <FieldHeader label={t("bulk.filters.search_seller_label")} hint={t("bulk.filters.search_seller_hint")} />
               <input
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                placeholder="Ex: Veja"
+                placeholder={t("bulk.filters.search_placeholder_ex")}
                 className="w-full rounded-2xl border px-4 py-3 text-[13px] outline-none"
                 style={{ borderColor: "#D6DEE8", color: "#03182F", background: "#FFFFFF" }}
               />
             </div>
             <div>
-              <FieldHeader label="Categorie" hint="Focus catalogue prioritaire pour le screening." />
+              <FieldHeader label={t("bulk.filters.category")} hint={t("bulk.filters.category_hint")} />
               <SelectField
                 value={category}
                 onChange={setCategory}
                 options={(data?.categories || []).map((item) => ({ value: item.id, label: item.label }))}
-                placeholder="Toutes les categories"
+                placeholder={t("bulk.filters.category_all")}
               />
             </div>
             <div>
-              <FieldHeader label="Prix" hint="Positionnement pricing du seller." />
+              <FieldHeader label={t("bulk.filters.price_label")} hint={t("bulk.filters.price_hint")} />
               <SelectField
                 value={priceCategory}
                 onChange={setPriceCategory}
                 options={(data?.priceCategories || []).map((item) => ({ value: item.id, label: item.label }))}
-                placeholder="Toutes les gammes"
+                placeholder={t("bulk.filters.price_all")}
               />
             </div>
             <div>
-              <FieldHeader label="Positionnement client" hint="Alignement cible client / audience operateur." />
+              <FieldHeader label={t("bulk.filters.customer_label")} hint={t("bulk.filters.customer_hint")} />
               <SelectField
                 value={customerCategory}
                 onChange={setCustomerCategory}
                 options={(data?.customerCategories || []).map((item) => ({ value: item.id, label: item.label }))}
-                placeholder="Tous les positionnements"
+                placeholder={t("bulk.filters.customer_all")}
               />
             </div>
             <div>
-              <FieldHeader label="Presence marketplace" hint="Signal de maturite marketplace deja observe." />
+              <FieldHeader label={t("bulk.filters.amazon_label")} hint={t("bulk.filters.amazon_hint")} />
               <SelectField
                 value={amazonPresence}
                 onChange={setAmazonPresence}
                 options={[
-                  { value: "yes", label: "Amazon detecte" },
-                  { value: "no", label: "Pas de signal Amazon" },
+                  { value: "yes", label: t("bulk.filters.amazon_detected") },
+                  { value: "no", label: t("bulk.filters.amazon_none") },
                 ]}
-                placeholder="Tous les cas"
+                placeholder={t("bulk.filters.amazon_all")}
               />
             </div>
             <div>
-              <FieldHeader label="Operateur cible" hint="Filtre initial sur la marketplace top match actuelle." />
+              <FieldHeader label={t("bulk.filters.operator_label")} hint={t("bulk.filters.operator_hint")} />
               <SelectField
                 value={operator}
                 onChange={setOperator}
@@ -284,11 +286,11 @@ export function BulkDashboard({ mode, onModeChange }: BulkDashboardProps) {
                   value: item.id,
                   label: item["marketplace name"],
                 }))}
-                placeholder="Tous les operateurs"
+                placeholder={t("bulk.filters.operator_all")}
               />
             </div>
             <div>
-              <FieldHeader label="Pays" hint="Geo du seller, utile pour le routing." />
+              <FieldHeader label={t("bulk.filters.country_label")} hint={t("bulk.filters.country_hint")} />
               <SelectField
                 value={country}
                 onChange={setCountry}
@@ -296,11 +298,11 @@ export function BulkDashboard({ mode, onModeChange }: BulkDashboardProps) {
                   value: item.id,
                   label: `${item.label} (${item.code})`,
                 }))}
-                placeholder="Tous les pays"
+                placeholder={t("bulk.filters.country_all")}
               />
             </div>
             <div>
-              <FieldHeader label="Roles cibles" hint="Preparation de la strategie d'outreach par seller." />
+              <FieldHeader label={t("bulk.filters.roles_label")} hint={t("bulk.filters.roles_hint")} />
               <RolePicker value={roles} onChange={setRoles} />
             </div>
             <ScenarioExplanation mode="bulk" operatorCount={data?.matchingProfiles?.length || 0} />
@@ -311,7 +313,7 @@ export function BulkDashboard({ mode, onModeChange }: BulkDashboardProps) {
               className="w-full rounded-2xl px-4 py-3 text-[14px] font-bold"
               style={{ background: "#03182F", color: "#FFFFFF" }}
             >
-              {analyzing ? "Analyse..." : "Analyser et enrichir"}
+              {analyzing ? t("bulk.filters.analyzing_bt") : t("bulk.filters.analyze")}
             </button>
           </div>
         </div>
@@ -324,14 +326,14 @@ export function BulkDashboard({ mode, onModeChange }: BulkDashboardProps) {
           )}
           <div className="flex items-center justify-between">
             <div className="grid gap-4 sm:grid-cols-4">
-              <MetricCard label="Sellers" value={stats.total} />
-              <MetricCard label="Score moyen" value={stats.average} />
+              <MetricCard label={t("bulk.metrics.sellers")} value={stats.total} />
+              <MetricCard label={t("bulk.metrics.avg_score")} value={stats.average} />
               <MetricCard label="HOT" value={stats.hot} accent="#B42318" />
               <MetricCard label="HIGH" value={stats.high} accent="#237A45" />
             </div>
             <label className="flex items-center gap-2 text-[12px] font-bold" style={{ color: "#425063" }}>
               <input type="checkbox" checked={showGlobe} onChange={() => setShowGlobe((current) => !current)} />
-              Globe
+              {t("bulk.globe_label")}
             </label>
           </div>
 
@@ -358,7 +360,7 @@ export function BulkDashboard({ mode, onModeChange }: BulkDashboardProps) {
                 className="rounded-2xl px-4 py-2.5 text-[13px] font-bold"
                 style={{ background: "#03182F", color: "#FFFFFF" }}
               >
-                Push tout ({results.length})
+                {t("bulk.push_all", { n: results.length })}
               </button>
               {selectedIds.size > 0 && (
                 <button
@@ -367,7 +369,7 @@ export function BulkDashboard({ mode, onModeChange }: BulkDashboardProps) {
                   className="rounded-2xl px-4 py-2.5 text-[13px] font-bold"
                   style={{ background: "#2764FF", color: "#FFFFFF" }}
                 >
-                  Push sélectionnés ({selectedIds.size})
+                  {t("bulk.push_selected_count", { n: selectedIds.size })}
                 </button>
               )}
               {selectedIds.size > 0 && (
@@ -377,7 +379,7 @@ export function BulkDashboard({ mode, onModeChange }: BulkDashboardProps) {
                   className="rounded-2xl px-4 py-2.5 text-[13px]"
                   style={{ color: "#6B7280", border: "1px solid #E2E8F0" }}
                 >
-                  Désélectionner
+                  {t("bulk.unselect")}
                 </button>
               )}
             </div>
@@ -386,12 +388,12 @@ export function BulkDashboard({ mode, onModeChange }: BulkDashboardProps) {
           <div className="space-y-4">
             {loading && (
               <div className="rounded-3xl border bg-white p-6 text-[14px]" style={{ borderColor: "#E2E8F0", color: "#5A697A" }}>
-                Chargement des options Supabase...
+                {t("bulk.loading_options")}
               </div>
             )}
             {!loading && results.length === 0 && !analyzing && (
               <div className="rounded-3xl border bg-white p-6 text-[14px]" style={{ borderColor: "#E2E8F0", color: "#5A697A" }}>
-                Lance une analyse pour afficher les sellers scores.
+                {t("bulk.empty_cta")}
               </div>
             )}
             {results.map((result) => (

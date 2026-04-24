@@ -1,6 +1,7 @@
 "use client";
 
 import type { Seller } from "@/lib/types";
+import { useT } from "@/lib/i18n";
 
 interface BulkQualifyPanelProps {
   sellers: Seller[];
@@ -9,6 +10,7 @@ interface BulkQualifyPanelProps {
 }
 
 export function BulkQualifyPanel({ sellers, onConfirm, onClose }: BulkQualifyPanelProps) {
+  const t = useT();
   const high = sellers.filter((s) => (s.match_score || 0) >= 70).length;
   const medium = sellers.filter((s) => (s.match_score || 0) >= 50 && (s.match_score || 0) < 70).length;
 
@@ -25,10 +27,10 @@ export function BulkQualifyPanel({ sellers, onConfirm, onClose }: BulkQualifyPan
         <div className="px-6 py-5 flex items-center justify-between" style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
           <div>
             <h2 className="text-[16px] font-bold" style={{ color: "#FFFFFF" }}>
-              Push to Outreach
+              {t("bulk_panel.push_title")}
             </h2>
             <p className="text-[12px] mt-0.5" style={{ color: "rgba(255,255,255,0.5)" }}>
-              {sellers.length} seller{sellers.length > 1 ? "s" : ""} selected
+              {t("bulk_panel.selected_count_sub", { n: sellers.length })}
             </p>
           </div>
           <button
@@ -46,15 +48,15 @@ export function BulkQualifyPanel({ sellers, onConfirm, onClose }: BulkQualifyPan
         {/* Stats */}
         <div className="px-6 py-4 grid grid-cols-3 gap-3" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
           <div className="rounded-lg p-3 text-center" style={{ background: "rgba(39,100,255,0.08)" }}>
-            <p className="text-[10px] font-bold" style={{ color: "rgba(255,255,255,0.4)" }}>Total</p>
+            <p className="text-[10px] font-bold" style={{ color: "rgba(255,255,255,0.4)" }}>{t("bulk_panel.total")}</p>
             <p className="text-[20px] font-bold" style={{ color: "#2764FF" }}>{sellers.length}</p>
           </div>
           <div className="rounded-lg p-3 text-center" style={{ background: "rgba(39,100,255,0.08)" }}>
-            <p className="text-[10px] font-bold" style={{ color: "rgba(255,255,255,0.4)" }}>High</p>
+            <p className="text-[10px] font-bold" style={{ color: "rgba(255,255,255,0.4)" }}>{t("bulk_panel.high")}</p>
             <p className="text-[20px] font-bold" style={{ color: "#2764FF" }}>{high}</p>
           </div>
           <div className="rounded-lg p-3 text-center" style={{ background: "rgba(245,158,11,0.08)" }}>
-            <p className="text-[10px] font-bold" style={{ color: "rgba(255,255,255,0.4)" }}>Medium</p>
+            <p className="text-[10px] font-bold" style={{ color: "rgba(255,255,255,0.4)" }}>{t("bulk_panel.medium")}</p>
             <p className="text-[20px] font-bold" style={{ color: "#F59E0B" }}>{medium}</p>
           </div>
         </div>
@@ -92,14 +94,14 @@ export function BulkQualifyPanel({ sellers, onConfirm, onClose }: BulkQualifyPan
             className="flex-1 py-3 rounded-lg text-[13px] font-bold"
             style={{ background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.5)", border: "1px solid rgba(255,255,255,0.08)" }}
           >
-            Annuler
+            {t("bulk_panel.cancel")}
           </button>
           <button
             onClick={onConfirm}
             className="flex-1 py-3 rounded-lg text-[13px] font-bold transition-all hover:shadow-lg"
             style={{ background: "#2764FF", color: "#FFFFFF" }}
           >
-            Confirmer le push
+            {t("bulk_panel.confirm_push")}
           </button>
         </div>
       </div>

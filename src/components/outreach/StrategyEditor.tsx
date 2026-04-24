@@ -6,6 +6,7 @@ import {
   OUTREACH_METHOD_OPTIONS,
   SEASONAL_MOMENT_OPTIONS,
 } from "@/lib/bdr-engine";
+import { useT } from "@/lib/i18n";
 
 interface StrategyEditorProps {
   value: OutreachStrategy;
@@ -66,13 +67,14 @@ function DayGapInput({
           className="w-20 rounded-2xl border px-3 py-3 text-[13px] outline-none text-center"
           style={{ borderColor: "#D6DEE8", color: "#03182F", background: "#FFFFFF" }}
         />
-        <span className="text-[12px]" style={{ color: "#6B7280" }}>jours</span>
+        <span className="text-[12px]" style={{ color: "#6B7280" }}>{useT()("strategy.days")}</span>
       </div>
     </label>
   );
 }
 
 export function StrategyEditor({ value, onChange }: StrategyEditorProps) {
+  const t = useT();
   const gap1 = value.emailGap1Days ?? 5;
   const gap2 = value.emailGap2Days ?? 7;
 
@@ -80,19 +82,19 @@ export function StrategyEditor({ value, onChange }: StrategyEditorProps) {
     <div className="space-y-4">
       <div className="grid gap-4 lg:grid-cols-3">
         <StrategySelect
-          label="Methode"
+          label={t("strategy.method")}
           value={value.method}
           options={OUTREACH_METHOD_OPTIONS}
           onChange={(method) => onChange({ method })}
         />
         <StrategySelect
-          label="Angle"
+          label={t("strategy.angle")}
           value={value.angle}
           options={OUTREACH_ANGLE_OPTIONS}
           onChange={(angle) => onChange({ angle })}
         />
         <StrategySelect
-          label="Saisonnalite"
+          label={t("strategy.seasonality")}
           value={value.seasonalMoment}
           options={SEASONAL_MOMENT_OPTIONS}
           onChange={(seasonalMoment) => onChange({ seasonalMoment })}
@@ -101,31 +103,31 @@ export function StrategyEditor({ value, onChange }: StrategyEditorProps) {
 
       <div className="rounded-2xl border p-4" style={{ borderColor: "#E2E8F0", background: "#F9FBFD" }}>
         <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.18em]" style={{ color: "#6F7F90" }}>
-          Espacement de la séquence
+          {t("strategy.spacing_header")}
         </p>
         <div className="flex flex-wrap items-center gap-6">
           <div className="flex items-center gap-2 text-[13px]" style={{ color: "#03182F" }}>
-            <span className="font-bold">Mail 1</span>
+            <span className="font-bold">{t("strategy.mail1")}</span>
             <span style={{ color: "#6B7280" }}>J0</span>
           </div>
           <span style={{ color: "#D6DEE8" }}>→</span>
           <DayGapInput
-            label="Délai avant Mail 2"
+            label={t("strategy.delay_mail2")}
             value={gap1}
             onChange={(emailGap1Days) => onChange({ emailGap1Days })}
           />
           <div className="flex items-center gap-2 text-[13px]" style={{ color: "#03182F" }}>
-            <span className="font-bold">Mail 2</span>
+            <span className="font-bold">{t("strategy.mail2")}</span>
             <span style={{ color: "#6B7280" }}>J+{gap1}</span>
           </div>
           <span style={{ color: "#D6DEE8" }}>→</span>
           <DayGapInput
-            label="Délai avant Mail 3"
+            label={t("strategy.delay_mail3")}
             value={gap2}
             onChange={(emailGap2Days) => onChange({ emailGap2Days })}
           />
           <div className="flex items-center gap-2 text-[13px]" style={{ color: "#03182F" }}>
-            <span className="font-bold">Mail 3</span>
+            <span className="font-bold">{t("strategy.mail3")}</span>
             <span style={{ color: "#6B7280" }}>J+{gap1 + gap2}</span>
           </div>
         </div>

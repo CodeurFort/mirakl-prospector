@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { TARGET_ROLE_OPTIONS } from "@/lib/bdr-engine";
 import { Badge } from "@/components/shared/Badge";
+import { useT } from "@/lib/i18n";
 
 interface RolePickerProps {
   value: string[];
@@ -11,6 +12,7 @@ interface RolePickerProps {
 
 export function RolePicker({ value, onChange }: RolePickerProps) {
   const [manualRole, setManualRole] = useState("");
+  const t = useT();
 
   function toggleRole(role: string) {
     onChange(
@@ -57,7 +59,7 @@ export function RolePicker({ value, onChange }: RolePickerProps) {
               addManualRole();
             }
           }}
-          placeholder="Ajouter un role manuel"
+          placeholder={t("role_picker.placeholder")}
           className="min-w-0 flex-1 rounded-xl border px-3 py-2 text-[13px] outline-none"
           style={{ borderColor: "#D6DEE8", color: "#03182F", background: "#FFFFFF" }}
         />
@@ -67,7 +69,7 @@ export function RolePicker({ value, onChange }: RolePickerProps) {
           className="rounded-xl px-3 py-2 text-[12px] font-bold"
           style={{ background: "#E8F0FF", color: "#2251CC" }}
         >
-          Ajouter
+          {t("role_picker.add")}
         </button>
       </div>
       {value.length > 0 && (
