@@ -34,6 +34,7 @@ export function SpecificSearch({ mode, onModeChange }: SpecificSearchProps) {
   const [sellerId, setSellerId] = useState<string | null>(null);
   const [pushingOutreach, setPushingOutreach] = useState(false);
   const [outOfScope, setOutOfScope] = useState<{ reason: string } | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   const transferToOutreach = useWorkspaceStore((s) => s.transferToOutreach);
   const setActiveTab = useWorkspaceStore((s) => s.setActiveTab);
@@ -49,6 +50,7 @@ export function SpecificSearch({ mode, onModeChange }: SpecificSearchProps) {
     setScrapedData(null);
     setOutOfScope(null);
     setSellerId(null);
+    setSelectedIds(new Set());
 
     try {
       const res = await fetch("/api/scrape-seller", {
@@ -126,7 +128,14 @@ export function SpecificSearch({ mode, onModeChange }: SpecificSearchProps) {
     }
   }
 
-  const selectedIds = new Set<string>();
+  const toggleSelection = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   const isLoading = status === "scraping";
 
@@ -307,7 +316,7 @@ export function SpecificSearch({ mode, onModeChange }: SpecificSearchProps) {
                     key={rec.marketplaceId}
                     recommendation={rec}
                     selected={selectedIds.has(rec.marketplaceId)}
-                    onToggle={() => undefined}
+                    onToggle={() => toggleSelection(rec.marketplaceId)}
                   />
                 ))}
               </div>

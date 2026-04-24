@@ -544,6 +544,22 @@ function scoreSeasonality(seller: Seller, profile: MarketplaceProfileRecord) {
   };
 }
 
+// Maps an Amazon SKU count to a continuous maturity score in [0, 26].
+// Logarithmic curve: small differences at low counts matter a lot, then the
+// curve flattens. Sweet spot ~100-500 SKUs. Beyond ~2000 we slightly *subtract*
+// because the seller is likely a mass distributor, not a DTC brand fit for
+// Mirakl Connect.
+function amazonCountScore(count: number): number {
+  if (count <= 0) return 0;
+  // log2(count+1): 1→1, 10→3.5, 50→5.7, 100→6.7, 500→9.0, 1000→10.0, 2000→11.0, 5000→12.3
+  const raw = Math.log2(count + 1);
+  // Scale 0→26 with peak around count≈500 (raw≈9). Above that, slight decay.
+  const peak = 9;
+  const dist = Math.abs(raw - peak);
+  const bounded = Math.max(0, 26 - dist * dist * 0.6);
+  return Math.round(bounded * 10) / 10;
+}
+
 // New criterion: marketplaceSignals — measurable signals of marketplace readiness
 // from Supabase columns (amazon_presence, amazon_product_count, enriched_at,
 // company_domain, contact_email). Slight modulation by marketplace selectivity.
@@ -551,29 +567,35 @@ function scoreMarketplaceSignals(seller: Seller, profile: MarketplaceProfileReco
   let score = 40;
   const reasons: string[] = [];
 
-  // Amazon presence is a signal of marketplace maturity
+  // Amazon presence — continuous score, not bucketed
   if (seller.amazon_presence) {
     const count = seller.amazon_product_count ?? 0;
-    if (count >= 500) {
-      score += 24;
+    const amzScore = amazonCountScore(count);
+    score += amzScore;
+
+    if (count >= 2000) {
+      reasons.push(`presence Amazon massive (${count} SKUs)`);
+    } else if (count >= 500) {
       reasons.push(`forte traction Amazon (${count} SKUs)`);
     } else if (count >= 100) {
-      score += 18;
       reasons.push(`presence Amazon confirmee (${count} SKUs)`);
     } else if (count > 0) {
-      score += 12;
       reasons.push(`presence Amazon ciblee (${count} SKUs)`);
     } else {
-      score += 10;
       reasons.push("presence Amazon detectee");
     }
-    // Premium/selective marketplaces slightly penalize mass Amazon exposure
+
+    // Premium/selective marketplaces penalize heavy Amazon exposure —
+    // smooth penalty that scales with SKU count above 500.
     const premiumHeavy = normalizeArray(profile.priceBands).some(
       (band) => band === "premium" || band === "luxury"
     );
-    if (premiumHeavy && (seller.amazon_product_count ?? 0) >= 500) {
-      score -= 6;
-      reasons.push("Amazon mass peut freiner un pilote premium");
+    if (premiumHeavy && count > 500) {
+      const penalty = Math.min(12, Math.log2(count / 500) * 4);
+      score -= penalty;
+      if (penalty >= 4) {
+        reasons.push("Amazon mass peut freiner un pilote premium");
+      }
     }
   }
 

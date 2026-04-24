@@ -1,6 +1,9 @@
+"use client";
+
 import type { MarketplaceRecommendation } from "@/lib/types";
 import { Badge } from "@/components/shared/Badge";
 import { PriorityBadge } from "@/components/shared/PriorityBadge";
+import { useT } from "@/lib/i18n";
 
 interface MarketplaceRecommendationCardProps {
   recommendation: MarketplaceRecommendation;
@@ -13,6 +16,7 @@ export function MarketplaceRecommendationCard({
   selected,
   onToggle,
 }: MarketplaceRecommendationCardProps) {
+  const t = useT();
   return (
     <div
       className="mirakl-card-elevated rounded-3xl p-5 transition-all"
