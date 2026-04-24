@@ -1,12 +1,13 @@
 "use client";
 
 import { useWorkspaceStore } from "@/store/useWorkspaceStore";
+import { useLanguage, useT } from "@/lib/i18n";
 import type { ActiveTab } from "@/lib/types";
 
-const tabs: { key: ActiveTab; label: string; icon: React.ReactNode }[] = [
+const tabs: { key: ActiveTab; labelKey: string; icon: React.ReactNode }[] = [
   {
     key: "prospection",
-    label: "Prospection",
+    labelKey: "nav.prospection",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="11" cy="11" r="8" />
@@ -16,7 +17,7 @@ const tabs: { key: ActiveTab; label: string; icon: React.ReactNode }[] = [
   },
   {
     key: "outreach",
-    label: "Outreach",
+    labelKey: "nav.outreach",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <rect width="20" height="16" x="2" y="4" rx="2" />
@@ -26,7 +27,7 @@ const tabs: { key: ActiveTab; label: string; icon: React.ReactNode }[] = [
   },
   {
     key: "pipeline",
-    label: "Pipeline",
+    labelKey: "nav.pipeline",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <rect x="3" y="3" width="7" height="9" rx="1" />
@@ -42,42 +43,66 @@ export function TabBar() {
   const activeTab = useWorkspaceStore((s) => s.activeTab);
   const setActiveTab = useWorkspaceStore((s) => s.setActiveTab);
   const outreachCount = useWorkspaceStore((s) => s.sellers.length);
+  const t = useT();
+  const lang = useLanguage((s) => s.lang);
+  const setLang = useLanguage((s) => s.setLang);
 
   return (
-    <nav className="flex-1 p-4 space-y-1">
-      {tabs.map((tab) => {
-        const active = activeTab === tab.key;
-        return (
-          <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[14px] font-normal transition-colors group text-left"
-            style={{
-              background: active ? "rgba(39,100,255,0.12)" : "transparent",
-              color: active ? "#FFFFFF" : "rgba(255,255,255,0.7)",
-            }}
-          >
-            <span
-              className="transition-opacity"
+    <div className="flex-1 flex flex-col">
+      <nav className="flex-1 p-4 space-y-1">
+        {tabs.map((tab) => {
+          const active = activeTab === tab.key;
+          return (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[14px] font-normal transition-colors group text-left"
               style={{
-                color: "#2764FF",
-                opacity: active ? 1 : 0.7,
+                background: active ? "rgba(39,100,255,0.12)" : "transparent",
+                color: active ? "#FFFFFF" : "rgba(255,255,255,0.7)",
               }}
             >
-              {tab.icon}
-            </span>
-            <span>{tab.label}</span>
-            {tab.key === "outreach" && outreachCount > 0 && (
               <span
-                className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-                style={{ background: "#F22E75", color: "#FFFFFF" }}
+                className="transition-opacity"
+                style={{
+                  color: "#2764FF",
+                  opacity: active ? 1 : 0.7,
+                }}
               >
-                {outreachCount}
+                {tab.icon}
               </span>
-            )}
-          </button>
-        );
-      })}
-    </nav>
+              <span>{t(tab.labelKey)}</span>
+              {tab.key === "outreach" && outreachCount > 0 && (
+                <span
+                  className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                  style={{ background: "#F22E75", color: "#FFFFFF" }}
+                >
+                  {outreachCount}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </nav>
+
+      {/* Language toggle */}
+      <div className="p-4 pt-2">
+        <div className="flex items-center gap-1 rounded-lg p-1" style={{ background: "rgba(255,255,255,0.08)" }}>
+          {(["en", "fr"] as const).map((code) => (
+            <button
+              key={code}
+              onClick={() => setLang(code)}
+              className="flex-1 py-1.5 text-[11px] font-bold rounded-md transition-all uppercase"
+              style={{
+                background: lang === code ? "#2764FF" : "transparent",
+                color: lang === code ? "#FFFFFF" : "rgba(255,255,255,0.6)",
+              }}
+            >
+              {code}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }

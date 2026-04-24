@@ -5,6 +5,7 @@ import type { MarketplaceRecommendation, ProspectionMode } from "@/lib/types";
 import { computeCriteria } from "@/lib/bdr-engine";
 import { ModeToggle } from "../ModeToggle";
 import { useWorkspaceStore } from "@/store/useWorkspaceStore";
+import { useT } from "@/lib/i18n";
 import { FieldHeader } from "../shared/FieldHeader";
 import { RolePicker } from "../shared/RolePicker";
 import { MetricCard } from "@/components/shared/MetricCard";
@@ -36,6 +37,7 @@ export function SpecificSearch({ mode, onModeChange }: SpecificSearchProps) {
 
   const transferToOutreach = useWorkspaceStore((s) => s.transferToOutreach);
   const setActiveTab = useWorkspaceStore((s) => s.setActiveTab);
+  const t = useT();
 
   async function handleScrape(event: React.FormEvent) {
     event.preventDefault();
@@ -134,14 +136,14 @@ export function SpecificSearch({ mode, onModeChange }: SpecificSearchProps) {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="text-[11px] font-bold px-2 py-0.5 rounded-full" style={{ background: "#FFF0F5", color: "#F22E75" }}>
-              PAR VENDEUR
+              {t("specific.badge")}
             </span>
           </div>
           <h1 className="font-bold" style={{ fontSize: 24, lineHeight: "34px", color: "#03182F" }}>
-            Scraping & scoring d'un vendeur
+            {t("specific.title")}
           </h1>
           <p className="mt-2 text-[14px]" style={{ color: "#425063" }}>
-            Entrez le nom de marque et le domaine — le scraper Python enrichit et score les marketplaces les plus adaptées.
+            {t("specific.subtitle")}
           </p>
         </div>
         <ModeToggle mode={mode} onChange={onModeChange} />
@@ -151,40 +153,40 @@ export function SpecificSearch({ mode, onModeChange }: SpecificSearchProps) {
         <div className="mirakl-card-elevated rounded-[28px] p-5">
           <div className="space-y-5">
             <div>
-              <FieldHeader label="Nom de marque" hint="Nom exact du vendeur à analyser." />
+              <FieldHeader label={t("specific.brand_name")} hint={t("specific.brand_name_hint")} />
               <input
                 value={brandName}
                 onChange={(e) => setBrandName(e.target.value)}
-                placeholder="Ex: AGMES"
+                placeholder={t("specific.brand_name_placeholder")}
                 className="w-full rounded-2xl border px-4 py-3 text-[14px] outline-none"
                 style={{ borderColor: "#D6DEE8", color: "#03182F" }}
               />
             </div>
             <div>
-              <FieldHeader label="Domaine" hint="Domaine du site vendeur — utilisé pour le scraping et le profiling." />
+              <FieldHeader label={t("specific.domain")} hint={t("specific.domain_hint")} />
               <input
                 value={companyDomain}
                 onChange={(e) => setCompanyDomain(e.target.value)}
-                placeholder="Ex: agmesnyc.com"
+                placeholder={t("specific.domain_placeholder")}
                 className="w-full rounded-2xl border px-4 py-3 text-[14px] outline-none"
                 style={{ borderColor: "#D6DEE8", color: "#03182F" }}
               />
             </div>
             <div>
-              <FieldHeader label="Rôles à cibler" hint="Contacts prioritaires pour l'outreach à venir." />
+              <FieldHeader label={t("specific.roles")} hint={t("specific.roles_hint")} />
               <RolePicker value={roles} onChange={setRoles} />
             </div>
 
             <div className="rounded-2xl p-4" style={{ background: "#F7FAFD", border: "1px solid #E2E8F0" }}>
               <p className="text-[11px] font-bold uppercase tracking-[0.18em]" style={{ color: "#6F7F90" }}>
-                Pipeline
+                {t("specific.pipeline")}
               </p>
               <ol className="mt-2 space-y-1.5">
                 {[
-                  "Inférence pays via TLD domaine",
-                  "Profiling catégorie & prix (web search)",
-                  "Scoring contre 7 marketplaces",
-                  "Insertion en Supabase sellers",
+                  t("specific.pipeline.step1"),
+                  t("specific.pipeline.step2"),
+                  t("specific.pipeline.step3"),
+                  t("specific.pipeline.step4"),
                 ].map((step, i) => (
                   <li key={i} className="flex items-start gap-2 text-[12px]" style={{ color: "#425063" }}>
                     <span className="mt-0.5 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center shrink-0" style={{ background: "#2764FF", color: "#fff" }}>
@@ -202,7 +204,7 @@ export function SpecificSearch({ mode, onModeChange }: SpecificSearchProps) {
               className="w-full rounded-2xl px-4 py-3 text-[14px] font-bold disabled:opacity-50"
               style={{ background: "#F22E75", color: "#FFFFFF" }}
             >
-              {isLoading ? "Scraping en cours..." : "Lancer le scraping"}
+              {isLoading ? t("specific.scraping") : t("specific.cta")}
             </button>
           </div>
         </div>
@@ -213,10 +215,10 @@ export function SpecificSearch({ mode, onModeChange }: SpecificSearchProps) {
               <div className="w-8 h-8 rounded-full border-2 border-[#2764FF] border-t-transparent animate-spin shrink-0" />
               <div>
                 <p className="text-[14px] font-bold" style={{ color: "#03182F" }}>
-                  Scraping {brandName}...
+                  {t("specific.scraping")} {brandName}…
                 </p>
                 <p className="text-[12px]" style={{ color: "#6B7280" }}>
-                  Inférence domaine → profiling → scoring 7 marketplaces
+                  {t("specific.scraping_hint", { n: 7 })}
                 </p>
               </div>
             </div>
@@ -236,13 +238,13 @@ export function SpecificSearch({ mode, onModeChange }: SpecificSearchProps) {
                 </div>
                 <div className="flex-1">
                   <p className="text-[14px] font-bold" style={{ color: "#B42318" }}>
-                    Marque hors scope Mirakl Fashion
+                    {t("specific.outofscope.title")}
                   </p>
                   <p className="mt-1 text-[13px]" style={{ color: "#7F1D1D" }}>
                     {outOfScope.reason}
                   </p>
                   <p className="mt-2 text-[12px]" style={{ color: "#7F1D1D" }}>
-                    Aucune recommandation marketplace generee et aucune ligne ajoutee en Supabase. Essayez avec une marque mode, beaute, accessoires, sport, enfant ou luxe.
+                    {t("specific.outofscope.hint")}
                   </p>
                 </div>
               </div>
@@ -252,7 +254,7 @@ export function SpecificSearch({ mode, onModeChange }: SpecificSearchProps) {
           {scrapedData && (
             <div className="rounded-2xl border px-4 py-3" style={{ borderColor: "#D6DEE8", background: "#FFFFFF" }}>
               <p className="text-[11px] font-bold uppercase tracking-[0.18em] mb-2" style={{ color: "#6F7F90" }}>
-                Profil détecté
+                {t("specific.detected_profile")}
               </p>
               <div className="flex flex-wrap gap-3 text-[13px]">
                 {scrapedData.category && (
@@ -277,14 +279,14 @@ export function SpecificSearch({ mode, onModeChange }: SpecificSearchProps) {
           {recommendations.length > 0 && (
             <>
               <div className="grid gap-4 sm:grid-cols-3">
-                <MetricCard label="Marketplaces analysées" value={stats.total} />
-                <MetricCard label="Score moyen" value={stats.avg} />
-                <MetricCard label="High priority" value={stats.high} accent="#B42318" />
+                <MetricCard label={t("specific.marketplaces_total")} value={stats.total} />
+                <MetricCard label={t("specific.avg_score")} value={stats.avg} />
+                <MetricCard label={t("specific.high_priority")} value={stats.high} accent="#B42318" />
               </div>
 
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <p className="text-[14px]" style={{ color: "#4C5B6D" }}>
-                  {selectedIds.size} marketplace(s) sélectionnée(s)
+                  {t("specific.selected_count", { n: selectedIds.size })}
                 </p>
                 {sellerId && (
                   <button
@@ -294,7 +296,7 @@ export function SpecificSearch({ mode, onModeChange }: SpecificSearchProps) {
                     className="rounded-2xl px-4 py-2.5 text-[13px] font-bold disabled:opacity-50"
                     style={{ background: "#03182F", color: "#FFFFFF" }}
                   >
-                    {pushingOutreach ? "Chargement..." : "Push Outreach + Pipeline"}
+                    {pushingOutreach ? t("specific.push_loading") : t("specific.push_outreach")}
                   </button>
                 )}
               </div>
@@ -319,9 +321,9 @@ export function SpecificSearch({ mode, onModeChange }: SpecificSearchProps) {
                   <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
                 </svg>
               </div>
-              <p className="text-[14px] font-bold" style={{ color: "#03182F" }}>Aucun seller analysé</p>
+              <p className="text-[14px] font-bold" style={{ color: "#03182F" }}>{t("specific.empty_title")}</p>
               <p className="mt-1 text-[13px]" style={{ color: "#6B7280" }}>
-                Entrez un nom de marque et son domaine pour lancer le scraping
+                {t("specific.empty_hint")}
               </p>
             </div>
           )}

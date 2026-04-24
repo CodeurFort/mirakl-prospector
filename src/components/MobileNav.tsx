@@ -1,18 +1,22 @@
 "use client";
 
 import { useWorkspaceStore } from "@/store/useWorkspaceStore";
+import { useLanguage, useT } from "@/lib/i18n";
 import type { ActiveTab } from "@/lib/types";
 
-const tabs: { key: ActiveTab; label: string }[] = [
-  { key: "prospection", label: "Prospection" },
-  { key: "outreach", label: "Outreach" },
-  { key: "pipeline", label: "Pipeline" },
+const tabs: { key: ActiveTab; labelKey: string }[] = [
+  { key: "prospection", labelKey: "nav.prospection" },
+  { key: "outreach", labelKey: "nav.outreach" },
+  { key: "pipeline", labelKey: "nav.pipeline" },
 ];
 
 export function MobileNav() {
   const activeTab = useWorkspaceStore((s) => s.activeTab);
   const setActiveTab = useWorkspaceStore((s) => s.setActiveTab);
   const outreachCount = useWorkspaceStore((s) => s.sellers.length);
+  const t = useT();
+  const lang = useLanguage((s) => s.lang);
+  const setLang = useLanguage((s) => s.setLang);
 
   return (
     <>
@@ -35,6 +39,16 @@ export function MobileNav() {
             Mirakl Prospector
           </span>
         </div>
+
+        {/* Compact language toggle on mobile */}
+        <button
+          onClick={() => setLang(lang === "en" ? "fr" : "en")}
+          className="text-[11px] font-bold px-2 py-1 rounded-md uppercase"
+          style={{ background: "rgba(255,255,255,0.1)", color: "#FFFFFF" }}
+          aria-label="Toggle language"
+        >
+          {lang}
+        </button>
       </div>
 
       {/* Bottom tab bar — mobile only */}
@@ -56,7 +70,7 @@ export function MobileNav() {
                 color: active ? "#2764FF" : "rgba(255,255,255,0.4)",
               }}
             >
-              <span className="text-[11px] font-bold">{tab.label}</span>
+              <span className="text-[11px] font-bold">{t(tab.labelKey)}</span>
               {tab.key === "outreach" && outreachCount > 0 && (
                 <span
                   className="absolute top-2 right-1/4 text-[8px] font-bold px-1 py-px rounded-full"

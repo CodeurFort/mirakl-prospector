@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { useWorkspaceStore } from "@/store/useWorkspaceStore";
+import { useT } from "@/lib/i18n";
 import { SellerAccounts } from "./SellerAccounts";
 import { SellerDetail } from "./SellerDetail";
 
 export function OutreachTab() {
   const sellerRecords = useWorkspaceStore((s) => s.sellers);
   const [selectedRecordId, setSelectedRecordId] = useState<string | null>(null);
+  const t = useT();
 
   const selectedRecord = sellerRecords.find((record) => record.id === selectedRecordId);
 
@@ -21,10 +23,10 @@ export function OutreachTab() {
     <div className="p-4 pt-[68px] lg:pt-4 lg:p-8 pb-16 lg:pb-8" style={{ maxWidth: 1200 }}>
       <div className="mb-6">
         <h1 className="font-bold" style={{ fontSize: 22, lineHeight: "32px", color: "#03182F" }}>
-          Outreach
+          {t("outreach.title")}
         </h1>
         <p className="mt-1" style={{ fontSize: 14, color: "#30373E" }}>
-          Comptes sellers avec strategie editable et sequence d'emails.
+          {t("outreach.subtitle")}
         </p>
       </div>
 
@@ -36,9 +38,9 @@ export function OutreachTab() {
               <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
             </svg>
           </div>
-          <p className="text-[16px] font-bold" style={{ color: "#03182F" }}>Aucun seller dans Outreach</p>
+          <p className="text-[16px] font-bold" style={{ color: "#03182F" }}>{t("outreach.empty_title")}</p>
           <p className="mt-2 text-[13px]" style={{ color: "#6B7280" }}>
-            Utilisez l'onglet Prospection pour qualifier et pousser des sellers ici
+            {t("outreach.empty_hint")}
           </p>
         </div>
       )}
@@ -46,7 +48,7 @@ export function OutreachTab() {
       {hasRecords && (
         <div>
           <h2 className="mb-3 text-[14px] font-bold" style={{ color: "#03182F" }}>
-            Comptes sellers ({sellerRecords.length})
+            {t("outreach.accounts_title", { n: sellerRecords.length })}
           </h2>
           <SellerAccounts onSelect={setSelectedRecordId} />
         </div>

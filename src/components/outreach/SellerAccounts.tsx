@@ -1,6 +1,7 @@
 "use client";
 
 import { useWorkspaceStore } from "@/store/useWorkspaceStore";
+import { useT } from "@/lib/i18n";
 import { PriorityBadge } from "@/components/shared/PriorityBadge";
 import { Badge } from "@/components/shared/Badge";
 
@@ -11,12 +12,13 @@ interface SellerAccountsProps {
 export function SellerAccounts({ onSelect }: SellerAccountsProps) {
   const sellerRecords = useWorkspaceStore((s) => s.sellers);
   const returnToProspection = useWorkspaceStore((s) => s.returnToProspection);
+  const t = useT();
 
-  const stageStyle: Record<string, { bg: string; color: string; label: string }> = {
-    ready: { bg: "#F2F8FF", color: "#2764FF", label: "Ready" },
-    in_sequence: { bg: "#FFF3E0", color: "#E65100", label: "In Sequence" },
-    sent: { bg: "#E8F5E9", color: "#2E7D32", label: "Sent" },
-    replied: { bg: "#F3E8FF", color: "#7C3AED", label: "Replied" },
+  const stageStyle: Record<string, { bg: string; color: string; key: string }> = {
+    ready: { bg: "#F2F8FF", color: "#2764FF", key: "accounts.stage.ready" },
+    in_sequence: { bg: "#FFF3E0", color: "#E65100", key: "accounts.stage.in_sequence" },
+    sent: { bg: "#E8F5E9", color: "#2E7D32", key: "accounts.stage.sent" },
+    replied: { bg: "#F3E8FF", color: "#7C3AED", key: "accounts.stage.replied" },
   };
 
   return (
@@ -24,13 +26,13 @@ export function SellerAccounts({ onSelect }: SellerAccountsProps) {
       <table className="w-full text-[13px]">
         <thead>
           <tr style={{ background: "#F2F8FF", borderBottom: "2px solid #E2E8F0" }}>
-            <th className="px-4 py-3 text-left font-bold" style={{ color: "#03182F" }}>Seller</th>
-            <th className="px-4 py-3 text-left font-bold" style={{ color: "#03182F" }}>Categorie</th>
-            <th className="px-4 py-3 text-left font-bold" style={{ color: "#03182F" }}>Score</th>
-            <th className="px-4 py-3 text-left font-bold" style={{ color: "#03182F" }}>Strategie</th>
-            <th className="px-4 py-3 text-left font-bold" style={{ color: "#03182F" }}>Emails</th>
-            <th className="px-4 py-3 text-left font-bold" style={{ color: "#03182F" }}>Stage</th>
-            <th className="px-4 py-3 text-left font-bold" style={{ color: "#03182F" }}>Actions</th>
+            <th className="px-4 py-3 text-left font-bold" style={{ color: "#03182F" }}>{t("accounts.seller")}</th>
+            <th className="px-4 py-3 text-left font-bold" style={{ color: "#03182F" }}>{t("accounts.category")}</th>
+            <th className="px-4 py-3 text-left font-bold" style={{ color: "#03182F" }}>{t("accounts.score")}</th>
+            <th className="px-4 py-3 text-left font-bold" style={{ color: "#03182F" }}>{t("accounts.strategy")}</th>
+            <th className="px-4 py-3 text-left font-bold" style={{ color: "#03182F" }}>{t("accounts.emails")}</th>
+            <th className="px-4 py-3 text-left font-bold" style={{ color: "#03182F" }}>{t("accounts.stage")}</th>
+            <th className="px-4 py-3 text-left font-bold" style={{ color: "#03182F" }}>{t("accounts.actions")}</th>
           </tr>
         </thead>
         <tbody>
@@ -90,7 +92,7 @@ export function SellerAccounts({ onSelect }: SellerAccountsProps) {
                     className="rounded-full px-2 py-0.5 text-[10px] font-bold"
                     style={{ background: stage.bg, color: stage.color }}
                   >
-                    {stage.label}
+                    {t(stage.key)}
                   </span>
                 </td>
                 <td className="px-4 py-3">
@@ -103,7 +105,7 @@ export function SellerAccounts({ onSelect }: SellerAccountsProps) {
                       className="text-[12px] font-bold hover:underline"
                       style={{ color: "#2764FF" }}
                     >
-                      Ouvrir
+                      {t("accounts.open")}
                     </button>
                     <button
                       onClick={(event) => {
@@ -113,7 +115,7 @@ export function SellerAccounts({ onSelect }: SellerAccountsProps) {
                       className="text-[12px] font-bold hover:underline"
                       style={{ color: "#B42318" }}
                     >
-                      Retour Prospection
+                      {t("outreach.return_prospection")}
                     </button>
                   </div>
                 </td>
